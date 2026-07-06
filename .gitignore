@@ -8,3 +8,4 @@ venv/
 *.wav
 *.flac
 simulation/output/
+.pytest_cache/
