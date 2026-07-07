@@ -48,6 +48,7 @@ class BaselineAnomalyDetector:
         self,
         contamination: Union[str, float] = "auto",
         random_state: Optional[int] = None,
+        threshold_sigma: float = 3.0,
         **isolation_forest_kwargs,
     ):
         """
@@ -59,12 +60,29 @@ class BaselineAnomalyDetector:
                 expect a specific non-zero anomaly proportion in it.
             random_state: seed for IsolationForest's internal randomness,
                 for reproducible fitting.
+            threshold_sigma: is_anomaly flags a window when its anomaly_score
+                exceeds (calibration mean + threshold_sigma * calibration
+                std), both computed by scoring the calibration set itself
+                once fitting completes -- not IsolationForest's own
+                contamination-based predict() cutoff. That built-in cutoff
+                sits close to the calibration set's own score mean (it
+                expects contamination's fraction of the *calibration* data
+                to already be outliers), which is a poor fit here since the
+                calibration period is assumed 100% normal by construction:
+                empirically (simulation/scripts/evaluate.py runs) it flagged
+                over a quarter of genuinely normal evaluation windows,
+                crushing per-type precision. 5 sigma keeps recall on actual
+                events (their scores sit far outside the calibration std)
+                while requiring a much larger deviation than ordinary
+                calibration-period noise before flagging.
             **isolation_forest_kwargs: any other sklearn IsolationForest
                 constructor arguments (e.g. n_estimators), passed through.
         """
         self._model = IsolationForest(
             contamination=contamination, random_state=random_state, **isolation_forest_kwargs
         )
+        self._threshold_sigma = threshold_sigma
+        self._threshold = None
         self._feature_names = None
         self._fitted = False
 
@@ -92,6 +110,13 @@ class BaselineAnomalyDetector:
         self._feature_names = list(df.columns)
         self._model.fit(df.values)
         self._fitted = True
+
+        # is_anomaly's cutoff is derived from how the *fitted* model scores
+        # the calibration data it was just fit on (see threshold_sigma
+        # above), not from IsolationForest's own predict().
+        calibration_scores = -self._model.decision_function(df.values)
+        self._threshold = calibration_scores.mean() + self._threshold_sigma * calibration_scores.std()
+
         return self
 
     def score(self, feature_vector: Union[pd.Series, np.ndarray]) -> Dict[str, float]:
@@ -111,8 +136,9 @@ class BaselineAnomalyDetector:
                     so the sign convention matches docs/data-pipeline.md's
                     `anomaly_flags.anomaly_score` column, where higher
                     should read as "more anomalous".)
-                "is_anomaly": bool, IsolationForest's own thresholded
-                    prediction (True if flagged an outlier).
+                "is_anomaly": bool, True if anomaly_score exceeds the
+                    calibration-derived threshold (see threshold_sigma in
+                    __init__ / fit()) -- not IsolationForest's own predict().
         """
         if not self._fitted:
             raise RuntimeError(
@@ -128,6 +154,6 @@ class BaselineAnomalyDetector:
         x = vector.reshape(1, -1)
         raw_normality_score = self._model.decision_function(x)[0]
         anomaly_score = -float(raw_normality_score)
-        is_anomaly = bool(self._model.predict(x)[0] == -1)
+        is_anomaly = anomaly_score > self._threshold
 
         return {"anomaly_score": anomaly_score, "is_anomaly": is_anomaly}
