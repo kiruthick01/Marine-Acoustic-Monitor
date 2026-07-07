@@ -174,6 +174,21 @@ def run_simulation(
         env_anomaly_active = window_index in storm_range
         true_anomaly = bool(audio_anomaly) or env_anomaly_active
 
+        # Single consolidated label for evaluate.py's per-type breakdown,
+        # collapsing the two independently-drawn anomaly channels
+        # (audio_anomaly_type, env_anomaly_active) into one field. Audio
+        # anomalies take priority in the rare case a window has both an
+        # audio anomaly and falls inside the storm's active range, since
+        # audio_anomaly_type is itself the more specific/rarer event.
+        if audio_anomaly == "vessel":
+            anomaly_type = "vessel"
+        elif audio_anomaly == "biological":
+            anomaly_type = "biological"
+        elif env_anomaly_active:
+            anomaly_type = "storm"
+        else:
+            anomaly_type = None
+
         windows_out.append(
             {
                 "window_index": window_index,
@@ -181,6 +196,7 @@ def run_simulation(
                 "timestamp_utc": timestamp_utc,
                 "audio_filename": audio_filename,
                 "true_anomaly": true_anomaly,
+                "anomaly_type": anomaly_type,
                 "audio_anomaly_type": audio_anomaly,
                 "audio_onset_s": audio_meta["onset_s"],
                 "env_anomaly_active": env_anomaly_active,
