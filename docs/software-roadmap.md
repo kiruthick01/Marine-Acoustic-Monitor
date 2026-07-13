@@ -18,7 +18,7 @@ real-world anomalies, which don't exist until the device is deployed).
 
 ---
 
-## 1. Verify and fix the test suite
+## 1. Verify and fix the test suite (Done)
 
 **Why:** the sandbox this was built in had no internet access to install
 scipy/scikit-learn/librosa/pytest, so `edge/capture_loop.py`,
@@ -43,7 +43,7 @@ Report a summary of what failed and what you changed.
 
 ---
 
-## 2. Make the capture loop resilient to sensor/telemetry failures
+## 2. Make the capture loop resilient to sensor/telemetry failures (Done)
 
 **Why:** right now, if any single HAL call in `CaptureLoop.run_one_window()`
 raises an exception (a sensor read fails, telemetry send throws, the SD card
@@ -79,7 +79,7 @@ failed window should be logged and skipped, not retried mid-cycle.
 
 ---
 
-## 3. Replace `print()` with real logging
+## 3. Replace `print()` with real logging (Done)
 
 **Why:** `edge/main.py`, `edge/calibration.py`, and `edge/scheduler.py`
 currently just `print()`. That's fine for an interactive `--once` run, but
@@ -102,7 +102,7 @@ Update or add tests as needed.
 
 ---
 
-## 4. Fix rate-of-change continuity across process restarts
+## 4. Fix rate-of-change continuity across process restarts (Done)
 
 **Why:** `CaptureLoop` tracks the previous environmental reading in memory
 only (`self._prev_env_reading`). Every process restart (crash, power blip,
@@ -128,7 +128,7 @@ CaptureLoop instance pointed at a DB with existing rows resumes correctly
 
 ---
 
-## 5. Build the recalibration workflow
+## 5. Build the recalibration workflow (Done)
 
 **Why:** `docs/ml-pipeline.md` calls for recalibrating the anomaly baseline
 after a seasonal shift, or once real flagged anomalies get manually
@@ -162,7 +162,7 @@ windows against a tmp_path DB first, then recalibrate against it).
 
 ---
 
-## 6. Bulk retrieval / maintenance export tool
+## 6. Bulk retrieval / maintenance export tool (Done)
 
 **Why:** `docs/data-pipeline.md`'s design assumes someone can, at a
 maintenance visit, pull Tier 1 (audio files) and Tier 2 (SQLite) off the
@@ -232,11 +232,11 @@ test gate.
 
 ## Checklist
 
-- [ ] 1. Verify and fix the test suite
-- [ ] 2. Resilient capture loop (sensor/telemetry failure handling)
-- [ ] 3. Real logging (replace print, rotating log file)
-- [ ] 4. Rate-of-change continuity across restarts
-- [ ] 5. Recalibration workflow
-- [ ] 6. Bulk retrieval / maintenance export tool
+- [x] 1. Verify and fix the test suite
+- [x] 2. Resilient capture loop (sensor/telemetry failure handling)
+- [x] 3. Real logging (replace print, rotating log file)
+- [x] 4. Rate-of-change continuity across restarts
+- [x] 5. Recalibration workflow
+- [x] 6. Bulk retrieval / maintenance export tool
 - [ ] 7. Config validation / fail-fast checks
 - [ ] 8. CI test gate
