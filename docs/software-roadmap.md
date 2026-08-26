@@ -187,7 +187,7 @@ verify the export produces a correct archive and manifest.
 
 ---
 
-## 7. Config validation / fail-fast checks
+## 7. Config validation / fail-fast checks (Done)
 
 **Why:** a nonsensical `edge/config.yaml` (e.g. `window_duration_s` longer
 than the wake interval, an invalid `hardware.mode`, colliding I2C
@@ -213,7 +213,7 @@ env_sensor_addresses set to the same value) is caught.
 
 ---
 
-## 8. CI so this doesn't regress silently
+## 8. CI so this doesn't regress silently (Done)
 
 **Why:** there's currently no automated check that a future change doesn't
 break the pipeline.
@@ -238,5 +238,5 @@ test gate.
 - [x] 4. Rate-of-change continuity across restarts
 - [x] 5. Recalibration workflow
 - [x] 6. Bulk retrieval / maintenance export tool
-- [ ] 7. Config validation / fail-fast checks
-- [ ] 8. CI test gate
+- [x] 7. Config validation / fail-fast checks
+- [x] 8. CI test gate

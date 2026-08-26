@@ -129,6 +129,77 @@ class EdgeConfig:
     hardware: HardwareConfig = dataclasses.field(default_factory=HardwareConfig)
     logging: LoggingConfig = dataclasses.field(default_factory=LoggingConfig)
 
+    def validate(self) -> None:
+        """
+        Fail fast on a nonsensical configuration.
+
+        Collects every violation found and raises a single ValueError
+        listing all of them, so an operator fixing a bad config.yaml sees
+        the whole picture at once instead of one crash per edit.
+        """
+        problems = []
+
+        window_s = self.duty_cycle.window_duration_s
+        interval_s = self.duty_cycle.window_interval_minutes * 60
+        if not window_s < interval_s:
+            problems.append(
+                f"duty_cycle.window_duration_s ({window_s}) must be shorter than "
+                f"window_interval_minutes ({self.duty_cycle.window_interval_minutes} "
+                f"min = {interval_s} s) -- the device can't record longer than it sleeps"
+            )
+
+        if self.calibration.calibration_windows < 5:
+            problems.append(
+                f"calibration.calibration_windows ({self.calibration.calibration_windows}) "
+                f"must be >= 5 -- too few windows to fit a meaningful baseline"
+            )
+
+        if self.hardware.mode not in ("mock", "real"):
+            problems.append(
+                f"hardware.mode ({self.hardware.mode!r}) must be 'mock' or 'real'"
+            )
+
+        if self.hardware.telemetry.type not in ("lora", "cellular"):
+            problems.append(
+                f"hardware.telemetry.type ({self.hardware.telemetry.type!r}) "
+                f"must be 'lora' or 'cellular'"
+            )
+
+        addresses = dict(self.hardware.i2c.env_sensor_addresses)
+        addresses["imu"] = self.hardware.i2c.imu_address
+        parsed: Dict[str, int] = {}
+        for sensor, addr in addresses.items():
+            key = (
+                f"hardware.i2c.imu_address"
+                if sensor == "imu"
+                else f"hardware.i2c.env_sensor_addresses.{sensor}"
+            )
+            if not (
+                isinstance(addr, str) and addr.lower().startswith("0x") and len(addr) > 2
+            ):
+                problems.append(f"{key} ({addr!r}) must be a hex string like '0x44'")
+                continue
+            try:
+                parsed[sensor] = int(addr, 16)
+            except ValueError:
+                problems.append(f"{key} ({addr!r}) must be a hex string like '0x44'")
+
+        seen: Dict[int, str] = {}
+        for sensor, value in parsed.items():
+            if value in seen:
+                problems.append(
+                    f"I2C address collision: {seen[value]!r} and {sensor!r} both use "
+                    f"{hex(value)} -- re-map one via its address-select pins"
+                )
+            else:
+                seen[value] = sensor
+
+        if problems:
+            raise ValueError(
+                "Invalid edge configuration:\n"
+                + "\n".join(f"  - {p}" for p in problems)
+            )
+
 
 def _merge_dataclass(instance, overrides: dict):
     """Apply a dict of overrides onto a dataclass instance, recursing into nested dataclasses."""
@@ -161,9 +232,12 @@ def load_config(path: Optional[Path] = None) -> EdgeConfig:
     path = Path(path)
 
     if not path.exists():
+        config.validate()
         return config
 
     with open(path) as f:
         raw = yaml.safe_load(f) or {}
 
-    return _merge_dataclass(config, raw)
+    config = _merge_dataclass(config, raw)
+    config.validate()
+    return config
