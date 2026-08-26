@@ -1,6 +1,6 @@
 <svg width="680" height="300" viewBox="0 0 680 300" xmlns="http://www.w3.org/2000/svg" role="img">
-<title>Anomaly detection results on a synthetic simulation run</title>
-<desc>Precision 0.937, recall 0.808, F1 0.868, measured on one simulation run of 80 evaluation windows following a 20-window baseline calibration period.</desc>
+<title>Anomaly detection results, mean across 30 seeded simulation runs</title>
+<desc>Precision 0.972 +/- 0.037, recall 0.690 +/- 0.261, F1 0.777 +/- 0.174 (mean +/- standard deviation), across 30 independently seeded simulation runs of 150 duty-cycle windows each (30-window baseline calibration per run). Error bars show one standard deviation across seeds.</desc>
 <style>
 text{font-family:Arial,Helvetica,sans-serif;}
 .title{font-size:16px;font-weight:600;fill:#2C2C2A;}
@@ -11,12 +11,13 @@ text{font-family:Arial,Helvetica,sans-serif;}
 .caveat{font-size:11px;fill:#888780;}
 .track{fill:#F1EFE8;}
 .bar{fill:#1D9E75;}
+.errorbar{stroke:#04342C;stroke-width:2;stroke-linecap:round;}
 .grid{stroke:#D3D1C7;stroke-width:1;stroke-dasharray:2 3;}
 .axis{stroke:#B4B2A9;stroke-width:1;}
 </style>
 
-<text class="title" x="24" y="30">Anomaly detection &#8212; example simulation run</text>
-<text class="subtitle" x="24" y="50">Precision, recall, and F1 on synthetic data (80 evaluation windows, 20-window baseline)</text>
+<text class="title" x="24" y="30">Anomaly detection &#8212; 30-seed aggregate</text>
+<text class="subtitle" x="24" y="50">Mean &#177; std precision/recall/F1 on synthetic data, 30 seeded runs (150 windows/run, 30-window baseline)</text>
 
 <!-- gridlines -->
 <line class="grid" x1="200" y1="80" x2="200" y2="244"/>
@@ -25,23 +26,32 @@ text{font-family:Arial,Helvetica,sans-serif;}
 <line class="grid" x1="515" y1="80" x2="515" y2="244"/>
 <line class="axis" x1="620" y1="80" x2="620" y2="244"/>
 
-<!-- Precision -->
+<!-- Precision: mean 0.972, std 0.037 -->
 <text class="label" x="190" y="112" text-anchor="end">Precision</text>
 <rect class="track" x="200" y="94" width="420" height="24" rx="4"/>
-<rect class="bar" x="200" y="94" width="393.5" height="24" rx="4"/>
-<text class="value" x="601" y="112" text-anchor="end">0.937</text>
+<rect class="bar" x="200" y="94" width="408.2" height="24" rx="4"/>
+<line class="errorbar" x1="592.7" y1="106" x2="620" y2="106"/>
+<line class="errorbar" x1="592.7" y1="100" x2="592.7" y2="112"/>
+<line class="errorbar" x1="620" y1="100" x2="620" y2="112"/>
+<text class="value" x="628" y="112">0.972 &#177; 0.037</text>
 
-<!-- Recall -->
+<!-- Recall: mean 0.690, std 0.261 -->
 <text class="label" x="190" y="168" text-anchor="end">Recall</text>
 <rect class="track" x="200" y="150" width="420" height="24" rx="4"/>
-<rect class="bar" x="200" y="150" width="339.4" height="24" rx="4"/>
-<text class="value" x="547" y="168" text-anchor="end">0.808</text>
+<rect class="bar" x="200" y="150" width="289.8" height="24" rx="4"/>
+<line class="errorbar" x1="380.2" y1="162" x2="599.4" y2="162"/>
+<line class="errorbar" x1="380.2" y1="156" x2="380.2" y2="168"/>
+<line class="errorbar" x1="599.4" y1="156" x2="599.4" y2="168"/>
+<text class="value" x="489.8" y="146" text-anchor="middle">0.690 &#177; 0.261</text>
 
-<!-- F1 -->
+<!-- F1: mean 0.777, std 0.174 -->
 <text class="label" x="190" y="224" text-anchor="end">F1 score</text>
 <rect class="track" x="200" y="206" width="420" height="24" rx="4"/>
-<rect class="bar" x="200" y="206" width="364.6" height="24" rx="4"/>
-<text class="value" x="572" y="224" text-anchor="end">0.868</text>
+<rect class="bar" x="200" y="206" width="326.3" height="24" rx="4"/>
+<line class="errorbar" x1="453.3" y1="218" x2="599.4" y2="218"/>
+<line class="errorbar" x1="453.3" y1="212" x2="453.3" y2="224"/>
+<line class="errorbar" x1="599.4" y1="212" x2="599.4" y2="224"/>
+<text class="value" x="526.3" y="202" text-anchor="middle">0.777 &#177; 0.174</text>
 
 <!-- axis ticks -->
 <text class="tick" x="200" y="258" text-anchor="middle">0</text>
@@ -50,6 +60,6 @@ text{font-family:Arial,Helvetica,sans-serif;}
 <text class="tick" x="515" y="258" text-anchor="middle">0.75</text>
 <text class="tick" x="620" y="258" text-anchor="middle">1.00</text>
 
-<text class="caveat" x="24" y="282">Single run; this evaluation window had an unusually high anomaly rate (73/80 windows). Not yet</text>
-<text class="caveat" x="24" y="296">validated on real hardware or across multiple seeds &#8212; see simulation/README.md for methodology.</text>
+<text class="caveat" x="24" y="278">Error bars: 1 std dev across seeds. Recall/F1 vary widely run-to-run (storm-type anomalies are</text>
+<text class="caveat" x="24" y="292">detected far less reliably than vessel/biological, see docs/datasets.md). Not validated on real hardware.</text>
 </svg>

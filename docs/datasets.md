@@ -139,6 +139,6 @@ precondition:
 Dataset names, sources, and access models above were checked against public
 listings (August 2026); approximate sizes/hours are from memory of their
 publications and should be re-verified against the source papers before
-appearing in a manuscript. The "Ratilal et al. 2022" entry previously cited
-in [related-work.md](related-work.md) could not be verified and is flagged
-there.
+appearing in a manuscript. An earlier "Ratilal et al. 2022" citation in
+[related-work.md](related-work.md) could not be verified and has been
+replaced there with the (confirmed) Ocean Observatories Initiative entry.

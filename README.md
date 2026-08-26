@@ -6,9 +6,14 @@
 
 | Precision | Recall | F1 |
 |-----------|--------|-----|
-| 0.937 | 0.808 | 0.868 |
+| 0.972 ± 0.037 | 0.690 ± 0.261 | 0.777 ± 0.174 |
 
-Caveat: these numbers are from one simulation run with an unusually high injected anomaly rate (a storm runoff event covered most of the evaluation window), not a stable benchmark. See [simulation/README.md](simulation/README.md) for methodology.
+Mean ± standard deviation across 30 independently seeded simulation runs (150 duty-cycle windows each, 30-window calibration period), via `simulation/scripts/multi_seed_evaluate.py --n-seeds 30`. Replaces an earlier single-run figure that happened to land on an easy draw. Two things this aggregate makes visible that a single run hides:
+
+- **Recall has high run-to-run variance** (± 0.261) — how well the detector does depends heavily on which anomalies a given run happens to inject and how they overlap the storm event, not just the average case.
+- **Per-anomaly-type breakdown is much weaker for storm/environmental anomalies than acoustic ones**: across the same 30 runs, vessel-type recall averages 1.00 (precision 0.32 ± 0.10, since the binary detector isn't type-aware) while storm-type precision/recall both average ~0.05 — the detector rarely fires specifically on the injected environmental anomaly. This is a real finding worth investigating (likely: the environmental feature contribution is small relative to acoustic features in the joint vector), not just a caveat to note.
+
+Still describes only how Isolation Forest separates *synthetic* anomalies from *synthetic* ambient background — no real hardware or field data exists yet to validate against. See [simulation/README.md](simulation/README.md) for methodology.
 
 ## Motivation
 

@@ -29,7 +29,7 @@ python simulation/scripts/run_simulation.py
 python simulation/scripts/evaluate.py
 ```
 
-`run_simulation.py` simulates a run of duty-cycle windows (default 100),
+`run_simulation.py` simulates a run of duty-cycle windows (default 150),
 randomly injecting some biological calls and vessel noise events, and
 (sometimes) one multi-window storm runoff event, matching the "record N
 seconds every M minutes" duty cycle from DECISIONS.md. It writes:
@@ -69,3 +69,24 @@ These numbers describe how well Isolation Forest, as configured today,
 separates synthetic anomalies from synthetic ambient background --  they
 say nothing yet about real-world performance, since no real hardware or
 field data exists to validate against.
+
+## Multi-seed evaluation (stable benchmark)
+
+`run_simulation.py`'s anomaly injection is randomized (which windows get a
+biological call or vessel event, whether a storm event happens at all and
+where it lands), so a single `run_simulation.py` + `evaluate.py` pass is one
+sample from a distribution, not a stable number -- an early single run
+happened to land on an unusually easy draw. For a number worth reporting
+(e.g. in a paper), use:
+
+```
+python simulation/scripts/multi_seed_evaluate.py --n-seeds 30
+```
+
+This runs `run_simulation()` + `evaluate.compute_results()` across 30
+independent seeds (0..29 by default), aggregates mean +/- standard
+deviation for overall and per-anomaly-type precision/recall/F1, and writes
+`simulation/output/multi_seed_results.json` (per-seed results plus the
+aggregate). The top-level [README](../README.md) reports this aggregate,
+not a single run. Useful flags: `--n-seeds`, `--n-windows`,
+`--window-interval-minutes`, `--base-seed`.

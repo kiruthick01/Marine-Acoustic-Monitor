@@ -28,6 +28,7 @@ import argparse
 import json
 import os
 import sys
+from typing import Optional
 
 import numpy as np
 import pandas as pd
@@ -102,17 +103,24 @@ def _print_confusion_and_metrics(label: str, confusion: dict, metrics: dict) -> 
     print()
 
 
-def evaluate(ground_truth_path: str = GROUND_TRUTH_PATH, results_path: str = RESULTS_PATH) -> None:
+def compute_results(ground_truth_path: str = GROUND_TRUTH_PATH) -> Optional[dict]:
     """
-    Fit the detector on the calibration period, score the rest, and report
-    overall + per-anomaly-type metrics plus a signal-conditioning SNR
-    sanity check.
+    Fit the detector on the calibration period and score the rest.
+
+    Pure computation, no printing or file writes -- shared by evaluate()
+    (single-run report) and multi_seed_evaluate.py (aggregates this across
+    several seeded runs). Returns None if there are no post-calibration
+    windows to score.
 
     Args:
         ground_truth_path: path to the ground_truth.json written by
             run_simulation.py.
-        results_path: path to write the structured evaluation_results.json
-            summary to.
+
+    Returns:
+        A dict with calibration_windows, evaluation_windows,
+        n_true_anomalies, overall (confusion matrix + precision/recall/f1),
+        per_anomaly_type (same, per BREAKDOWN_ANOMALY_TYPES), and
+        signal_conditioning_snr -- or None if evaluation_set is empty.
     """
     with open(ground_truth_path) as f:
         run = json.load(f)
@@ -124,8 +132,7 @@ def evaluate(ground_truth_path: str = GROUND_TRUTH_PATH, results_path: str = RES
     evaluation_set = windows[calibration_windows:]
 
     if not evaluation_set:
-        print("No windows after the calibration period to evaluate against -- run with more --n-windows.")
-        return
+        return None
 
     calibration_df = pd.DataFrame([w["feature_vector"] for w in calibration_set])
     detector = BaselineAnomalyDetector(random_state=0).fit(calibration_df)
@@ -170,36 +177,54 @@ def evaluate(ground_truth_path: str = GROUND_TRUTH_PATH, results_path: str = RES
         "n_windows": len(windows),
     }
 
-    n_eval = len(evaluation_set)
-    n_true_anomalies = sum(true_anomaly_flags)
+    return {
+        "calibration_windows": calibration_windows,
+        "evaluation_windows": len(evaluation_set),
+        "n_true_anomalies": sum(true_anomaly_flags),
+        "overall": {"confusion_matrix": overall_confusion, **overall_metrics},
+        "per_anomaly_type": per_type_results,
+        "signal_conditioning_snr": snr_stats,
+    }
+
+
+def evaluate(ground_truth_path: str = GROUND_TRUTH_PATH, results_path: str = RESULTS_PATH) -> None:
+    """
+    Fit the detector on the calibration period, score the rest, and report
+    overall + per-anomaly-type metrics plus a signal-conditioning SNR
+    sanity check.
+
+    Args:
+        ground_truth_path: path to the ground_truth.json written by
+            run_simulation.py.
+        results_path: path to write the structured evaluation_results.json
+            summary to.
+    """
+    results = compute_results(ground_truth_path)
+    if results is None:
+        print("No windows after the calibration period to evaluate against -- run with more --n-windows.")
+        return
 
     # --- Print report ---
-    print(f"Calibration period: {calibration_windows} windows (assumed normal, used to fit the baseline)")
-    print(f"Evaluation period:  {n_eval} windows ({n_true_anomalies} with a true injected anomaly)")
+    print(f"Calibration period: {results['calibration_windows']} windows (assumed normal, used to fit the baseline)")
+    print(f"Evaluation period:  {results['evaluation_windows']} windows ({results['n_true_anomalies']} with a true injected anomaly)")
     print()
 
-    _print_confusion_and_metrics("Overall", overall_confusion, overall_metrics)
+    overall = results["overall"]
+    _print_confusion_and_metrics("Overall", overall["confusion_matrix"], overall)
 
     for anomaly_type in BREAKDOWN_ANOMALY_TYPES:
-        result = per_type_results[anomaly_type]
+        result = results["per_anomaly_type"][anomaly_type]
         _print_confusion_and_metrics(
             f"Per-type: {anomaly_type}", result["confusion_matrix"], result
         )
 
+    snr_stats = results["signal_conditioning_snr"]
     print("-- Signal conditioning (Stage 0) SNR sanity check --")
     print(f"Mean SNR before: {snr_stats['mean_snr_before_db']:.3f} dB")
     print(f"Mean SNR after:  {snr_stats['mean_snr_after_db']:.3f} dB")
     print(f"Mean improvement: {snr_stats['mean_snr_improvement_db']:.3f} dB (across {snr_stats['n_windows']} windows)")
 
     # --- Write structured results ---
-    results = {
-        "calibration_windows": calibration_windows,
-        "evaluation_windows": n_eval,
-        "n_true_anomalies": n_true_anomalies,
-        "overall": {"confusion_matrix": overall_confusion, **overall_metrics},
-        "per_anomaly_type": per_type_results,
-        "signal_conditioning_snr": snr_stats,
-    }
     os.makedirs(os.path.dirname(results_path), exist_ok=True)
     with open(results_path, "w") as f:
         json.dump(results, f, indent=2)
