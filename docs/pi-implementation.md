@@ -94,14 +94,13 @@ isn't a from-scratch task once hardware arrives.
 
 ## Known gaps / next steps (software side)
 
-- **Rate-of-change continuity across restarts**: `CaptureLoop` currently
-  computes `*_roc` against the previous in-process reading only, resetting to
-  0 on process restart rather than resuming from the last SQLite row. Fine for
-  now; worth fixing before a long unattended field deployment.
-- **Recalibration workflow**: `edge/calibration.py` only covers the *initial*
-  calibration period. A full recalibration pass (re-fit from bulk-retrieved
-  data, bump `baseline_version`) per docs/ml-pipeline.md Stage 2 is not yet
-  built.
+- ~~**Rate-of-change continuity across restarts**~~ — done: `CaptureLoop` now
+  seeds `_prev_env_reading` from the most recent `environmental_readings` row
+  on construction, so `*_roc` resumes correctly after a process restart.
+- ~~**Recalibration workflow**~~ — done: `edge/recalibrate.py` re-fits a
+  `BaselineAnomalyDetector` from an existing database over a date/window
+  range and saves it under an incremented `baseline_version` without
+  overwriting the previous model file.
 - **`edge/hal/real.py` driver bodies**: stubbed with `NotImplementedError` and
   a comment on what each needs; the actual implementation work is gated on the
   priced BOM (docs/hardware-spec.md) and real part datasheets.

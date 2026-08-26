@@ -1,6 +1,6 @@
 # ML Pipeline
 
-Status: planning/architecture phase. No implementation code yet. Consistent with [DECISIONS.md](../DECISIONS.md). Three stages, per the locked decision — this document expands each into implementation-blueprint detail.
+Status: Stages 0–2 implemented (`simulation/pipeline/` for the algorithms, `edge/` for the on-device loop); Stage 3 remains future work. Consistent with [DECISIONS.md](../DECISIONS.md). Three stages, per the locked decision — this document expands each into implementation-blueprint detail.
 
 ![ML pipeline](../diagrams/marine_monitor_ml_pipeline.svg)
 
@@ -10,7 +10,7 @@ Runs on the Pi, immediately after capture and immediately before Stage 1 feature
 
 **Bandpass filter (Butterworth, via SciPy):**
 - Isolates the frequency range that carries signal of interest and discards the rest before it can add noise/variance to downstream features.
-- Vessel tonal peaks (shaft/blade-rate harmonics) concentrate around 60–120 Hz; biological calls typically extend higher. Default passband: 20–4000 Hz — wide enough to retain both, while cutting very low-frequency flow/handling noise below 20 Hz and very high-frequency electronic/self-noise above 4 kHz.
+- Vessel tonal peaks (shaft/blade-rate harmonics) concentrate around 60–120 Hz; biological calls typically extend higher. Operative passband: 20 Hz–12 kHz (`edge/config.yaml` `signal_conditioning`; `condition_signal()` passes `high_hz=12000`) — wide enough to retain vessel tonals and the bioacoustic band of interest, while cutting very low-frequency flow/handling noise below 20 Hz. (`bandpass_filter()`'s own function default is 4 kHz, but the pipeline always overrides it to 12 kHz.)
 - Zero-phase (filtfilt-style) application, so no time delay is introduced ahead of Stage 1's time-domain features (RMS std, ZCR).
 
 **Noise floor estimation:**

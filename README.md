@@ -22,6 +22,7 @@ Marine ecosystems generate continuous acoustic and environmental signal — biol
 - [docs/data-pipeline.md](docs/data-pipeline.md) — storage tiers, duty-cycle sampling flow, bulk retrieval process, SQLite schema sketch.
 - [docs/ml-pipeline.md](docs/ml-pipeline.md) — 3-stage ML pipeline: feature extraction, unsupervised anomaly detection, future supervised classification.
 - [docs/related-work.md](docs/related-work.md) — prior art and how this project's design differs.
+- [docs/datasets.md](docs/datasets.md) — what data the project needs (own deployment data, public vessel/bioacoustic/multimodal datasets, pretrained models) and which pipeline stage each serves.
 - [docs/pi-implementation.md](docs/pi-implementation.md) — how `edge/` runs today in mock-hardware mode, the I2C wiring/address plan for when hardware exists, and systemd deployment.
 
 ## Implementation
@@ -33,7 +34,7 @@ Marine ecosystems generate continuous acoustic and environmental signal — biol
 
 ## Diagrams
 
-`/diagrams` — reserved for architecture/data-flow diagrams derived from the docs above (not yet created).
+`/diagrams` — architecture/data-flow diagrams derived from the docs above: system architecture, data storage tiers, ML pipeline (each embedded in its corresponding doc), and the simulation results chart shown at the top of this README.
 
 ## Documentation map
 

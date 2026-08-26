@@ -3,9 +3,9 @@
 ## What this is, and isn't
 
 This `/simulation` layer is synthetic data and code standing in for real
-hardware until it arrives. Project status is planning/architecture phase --
-see [../DECISIONS.md](../DECISIONS.md): no hardware purchased, no field
-recordings exist. Everything under `simulation/data_generator/` synthesizes
+hardware until it arrives -- see [../DECISIONS.md](../DECISIONS.md): no
+hardware purchased, no field recordings exist yet. Everything under
+`simulation/data_generator/` synthesizes
 plausible hydrophone audio and environmental sensor readings (ambient noise,
 biological calls, vessel passages, storm runoff events); `simulation/pipeline/`
 implements the real Stage 1/2 feature extraction and anomaly detection

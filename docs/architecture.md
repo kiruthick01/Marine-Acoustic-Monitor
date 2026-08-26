@@ -1,6 +1,6 @@
 # System Architecture
 
-Status: planning/architecture phase. No hardware purchased, no implementation code written yet. This document describes the intended system, consistent with [DECISIONS.md](../DECISIONS.md).
+Status: design locked and implemented in software (`edge/` + `simulation/`, running against mock hardware); no hardware purchased yet. This document describes the system design, consistent with [DECISIONS.md](../DECISIONS.md).
 
 ![System architecture](../diagrams/marine_monitor_system_architecture.svg)
 

@@ -1,6 +1,6 @@
 # Data Pipeline
 
-Status: planning/architecture phase. No implementation code yet. Consistent with [DECISIONS.md](../DECISIONS.md) and [architecture.md](architecture.md).
+Status: implemented — `simulation/pipeline/storage.py` implements the schema below exactly (same table/column names), and `edge/capture_loop.py` writes it per window. Consistent with [DECISIONS.md](../DECISIONS.md) and [architecture.md](architecture.md).
 
 ## Storage tiers
 
