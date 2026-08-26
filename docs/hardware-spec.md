@@ -25,7 +25,14 @@ Sized to sustain duty-cycle sampling, edge compute bursts, and telemetry transmi
 ## Key interface considerations
 
 **Hydrophone / ADC**
-Hydrophone output is analog and low-level, requiring a dedicated ADC (or ADC-equipped preamp) ahead of the Pi's GPIO — the Pi has no native high-quality analog audio input. ADC must support a sample rate sufficient for the frequency range of interest (bioacoustic signals of interest typically extend well above what a basic audio codec assumes) and sufficient bit depth to preserve dynamic range for both quiet ambient and loud transient events. Interface to the Pi is most likely I2S or SPI, not USB, to minimize latency and power overhead — final bus choice deferred to implementation.
+Hydrophone output is analog and low-level, requiring a preamp and a dedicated ADC ahead of the Pi — the Pi has no native analog audio input. The ADC must support a sample rate covering the passband of interest (20 Hz–12 kHz per [ml-pipeline.md](ml-pipeline.md) Stage 0, i.e. ≥24 kHz sampling; the pipeline default is 22.05 kHz) and sufficient bit depth to preserve dynamic range across quiet ambient and loud transient events (16-bit minimum; 24-bit preferred for headroom without gain retuning).
+
+Two candidate interfaces to the Pi, decided at BOM time:
+
+- **USB audio codec** — the proven path: the peer-reviewed Pi recorder this project cites ([related-work.md](related-work.md), Caldas-Morgan et al. 2015) digitized its hydrophone through a USB codec, and USB audio class devices need no custom kernel/driver work. Costs: a few hundred mW of additional continuous draw while active, and codec choice constrains sample-rate/bit-depth options to consumer-audio profiles — both acceptable in this design, since capture is duty-cycled (the codec is powered only during wake windows) and consumer profiles (up to 96 kHz/24-bit) comfortably cover the 12 kHz passband.
+- **I2S ADC** — lower power and full control of sample rate/bit depth, at the cost of device-tree/driver integration work and fewer off-the-shelf marine-grade options. Worth choosing only if the power budget (`tools/power_budget.py`, once fed real BOM figures) shows the USB codec's active-window draw materially affects solar/battery sizing.
+
+Default assumption for planning: USB codec, on the strength of the published precedent — revisit only if the priced power budget argues otherwise. (Latency is not a factor either way: this is a duty-cycle recorder, not a real-time-response system.) SPI ADCs remain relevant for the auxiliary *low-rate* analog inputs (see environmental sensor bus below), not for audio-rate capture.
 
 **Environmental sensor bus**
 Temperature, pH, turbidity, and salinity sensors are typically I2C or analog-with-ADC devices. I2C is preferred where available for multi-sensor sharing over one bus (fewer GPIO pins, simpler wiring), with attention to address collisions if multiple sensors share default addresses. Sensors without native I2C output route through the same ADC used for auxiliary analog inputs, or a separate low-channel-count ADC if the hydrophone ADC is fully committed.

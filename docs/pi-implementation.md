@@ -75,9 +75,10 @@ Collision-avoidance checklist once real parts are chosen:
 2. Where two candidates collide, prefer the one with a hardware address-select
    pin/jumper or software-reassignable address (EZO-class boards, most ADCs)
    over the one that's fixed.
-3. The hydrophone ADC (per hardware-spec.md, "most likely I2S or SPI, not
-   USB") is **not** on this I2C bus at all — I2S/SPI are separate buses, so it
-   never competes with this address space.
+3. The hydrophone audio interface (per hardware-spec.md: USB codec as the
+   planning default, I2S as the power-budget-driven alternative) is **not**
+   on this I2C bus either way — USB and I2S are separate buses, so it never
+   competes with this address space.
 4. Update `edge/config.yaml`'s `hardware.i2c.*` fields to match whatever the
    final wiring turns out to be; `edge/hal/real.py`'s drivers read addresses
    from config, not from hardcoded constants, specifically so a rewire doesn't
