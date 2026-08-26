@@ -30,7 +30,7 @@ Raw audio as flat WAV/FLAC files on local storage, indexed by timestamp filename
 
 ## Project status
 
-Planning/architecture phase, no hardware purchased, no implementation code yet. Public framing must stay honest about this.
+No hardware purchased yet. Edge software, simulation pipeline, and tooling are implemented and tested against `edge/hal/mock.py`; hardware-blocked work (real HAL drivers, field calibration, filter/ADC tuning against real recordings, Stage 3 supervised classification) remains, per `docs/pi-implementation.md` and `docs/software-roadmap.md`. Public framing must stay honest about this.
 
 ## Related work to cite
 
