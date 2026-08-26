@@ -64,6 +64,11 @@ Choice between the two (or running both and comparing) is an implementation-time
 
 **Output:** an anomaly score plus a boolean anomaly flag per capture window, persisted locally and included in the compact telemetry payload when flagged.
 
+**Known limitation — subspace-anomaly dilution (verified on synthetic data, Aug 2026):**
+Isolation Forest on the joint vector detects acoustically-driven anomalies (vessel, biological) near-perfectly but largely misses environmental anomalies (storm runoff): across 30 seeded simulation runs, storm-type recall averages ~0.05 even though storm windows deviate enormously in the environmental subspace (turbidity |z| ≈ 33, salinity |z| ≈ 20 vs. calibration). Diagnosis (reproducible via `python simulation/scripts/detector_ablation.py`): the joint vector is 34 acoustic dims vs. 8 environmental; Isolation Forest picks split features uniformly at random, so an anomaly confined to ~2–3 dims isolates no faster than normal points — a documented Isolation Forest weakness in the presence of many irrelevant features. It is *not* a feature-scaling problem (standardizing all features first produces identical scores) and *not* a weak-signal problem (an env-only detector on the same windows reaches ~0.75 storm recall).
+
+A candidate remedy was measured: mean-squared-z scoring against calibration statistics (the degenerate form of this stage's other sanctioned candidate, autoencoder reconstruction error). Across the same 30 seeds it raises storm-type recall 0.05 → 0.59 and overall recall 0.69 → 0.99, at the cost of overall precision 0.97 → 0.72 (overall F1 0.78 → 0.82). Neither scorer dominates — the trade is false alarms vs. missed environmental events. Resolution (switch scorer, run both and combine, or a small autoencoder) is an open implementation decision; the trade-off itself is a reportable finding for the multimodal-correlation claim.
+
 ## Stage 3 — Supervised classification (future work, not built now)
 
 Explicit future stage, gated on either of two preconditions:
