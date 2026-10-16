@@ -290,59 +290,6 @@ def fig_detection():
         save(fig, "fig7_detection_timeline.png")
 
 
-def fig_classification():
-    p = os.path.join(OUT_DIR, "classification_results.json")
-    if not os.path.exists(p):
-        return
-    R = json.load(open(p))
-    P = np.load(os.path.join(OUT_DIR, "classification_preds.npz"))
-    doms = ["A_test_unseen_weather", "A_test_other_season", "B_zero_shot", "B_other_season"]
-    fig, ax = plt.subplots(2, 3, figsize=(18, 10))
-    x = np.arange(len(doms)); w = 0.35
-    ax[0, 0].bar(x - w / 2, [R[f"GB/{d}"]["mAP"] for d in doms], w, label="gradient boosting", color="#868e96")
-    ax[0, 0].bar(x + w / 2, [R[f"CNN/{d}"]["mAP"] for d in doms], w, label="CNN (log-mel + env)", color="#364fc7")
-    ax[0, 0].set_xticks(x); ax[0, 0].set_xticklabels([d.replace("_", "\n") for d in doms], fontsize=8); ax[0, 0].set_ylim(0, 1)
-    ax[0, 0].set_title("Mean average precision, trained on site A only"); ax[0, 0].legend()
-    d = "A_test_unseen_weather"
-    xs = np.arange(len(LABELS))
-    ax[0, 1].bar(xs - w / 2, [R[f"GB/{d}"]["ap"][l] for l in LABELS], w, color="#868e96")
-    ax[0, 1].bar(xs + w / 2, [R[f"CNN/{d}"]["ap"][l] for l in LABELS], w, color="#364fc7")
-    ax[0, 1].set_xticks(xs); ax[0, 1].set_xticklabels([l.replace("is_", "") for l in LABELS], rotation=30); ax[0, 1].set_ylim(0, 1.02)
-    ax[0, 1].set_title("Per-class AP on unseen weather (site A)")
-    vc = P["CNNvc/A_test_unseen_weather"]; yt = P["VC/A_test_unseen_weather"]
-    m = yt >= 0
-    cm = np.zeros((5, 5))
-    for a_, b_ in zip(yt[m], vc[m].argmax(1)):
-        cm[a_, b_] += 1
-    cmn = cm / np.maximum(cm.sum(1, keepdims=True), 1)
-    ax[0, 2].imshow(cmn, cmap="Blues", vmin=0, vmax=1)
-    for i in range(5):
-        for j in range(5):
-            ax[0, 2].text(j, i, f"{cmn[i, j]:.2f}\n({int(cm[i, j])})", ha="center", va="center", fontsize=7, color="w" if cmn[i, j] > 0.5 else "k")
-    ax[0, 2].set_xticks(range(5)); ax[0, 2].set_xticklabels(VESSEL_CLASSES, rotation=30); ax[0, 2].set_yticks(range(5)); ax[0, 2].set_yticklabels(VESSEL_CLASSES)
-    ax[0, 2].set_title(f"Vessel-type confusion (audible vessels, acc {R[f'CNN/{d}'].get('vessel_type_acc', float('nan')):.2f})"); ax[0, 2].grid(False)
-    h = np.array(R["cnn_pretrain_history"])
-    ax[1, 0].plot(h[:, 0], label="train loss", color="#c92a2a"); ax2 = ax[1, 0].twinx(); ax2.plot(h[:, 1], label="val mAP", color="#364fc7"); ax2.grid(False)
-    ax[1, 0].set(xlabel="epoch", ylabel="loss", title="CNN pre-training on site A"); ax2.set_ylabel("val mAP")
-    ft = R["finetune"]["final"]
-    ks = ["B_zero_shot", "B_other_season"]
-    xx = np.arange(2); w3 = 0.2
-    ax[1, 1].bar(xx - 1.5 * w3, [ft[k]["zero_shot_mAP"] for k in ks], w3, label="zero-shot (A→B)", color="#adb5bd")
-    ax[1, 1].bar(xx - 0.5 * w3, [ft[k]["scratch_mAP"][0] for k in ks], w3, yerr=[ft[k]["scratch_mAP"][1] for k in ks], label=f"scratch on {R['finetune']['adapt_windows']} B windows", color="#e8590c", capsize=3)
-    ax[1, 1].bar(xx + 0.5 * w3, [ft[k]["gb_A+B_small_mAP"] for k in ks], w3, label="GB on A + B-small", color="#868e96")
-    ax[1, 1].bar(xx + 1.5 * w3, [ft[k]["finetuned_mAP"][0] for k in ks], w3, yerr=[ft[k]["finetuned_mAP"][1] for k in ks], label=f"fine-tuned ({R['finetune']['selected']['stage']})", color="#2f9e44", capsize=3)
-    ax[1, 1].set_xticks(xx); ax[1, 1].set_xticklabels(["B held-out (same season)", "B other season"]); ax[1, 1].set_ylim(0, 1); ax[1, 1].legend(fontsize=7)
-    ax[1, 1].set_title("Transfer to a new site (mAP, mean ± sd over 3 inits)")
-    k = "B_zero_shot"
-    ax[1, 2].bar(xs - w3, [ft[k]["zero_shot_per_label_ap"][l] for l in LABELS], w3, color="#adb5bd", label="zero-shot")
-    ax[1, 2].bar(xs, [ft[k]["scratch_per_label_ap"][l] for l in LABELS], w3, color="#e8590c", label="scratch")
-    ax[1, 2].bar(xs + w3, [ft[k]["finetuned_per_label_ap"][l] for l in LABELS], w3, color="#2f9e44", label="fine-tuned")
-    ax[1, 2].set_xticks(xs); ax[1, 2].set_xticklabels([l.replace("is_", "") for l in LABELS], rotation=30); ax[1, 2].legend(fontsize=7); ax[1, 2].set_ylim(0, 1.02)
-    ax[1, 2].set_title("Per-class AP at site B, held-out window")
-    fig.tight_layout()
-    save(fig, "fig8_classification.png")
-
-
 if __name__ == "__main__":
     ap = argparse.ArgumentParser()
     ap.add_argument("--only", choices=["data", "models"], default=None)
@@ -351,4 +298,4 @@ if __name__ == "__main__":
         run_data_figs()
     if a.only in (None, "models"):
         fig_detection()
-        fig_classification()
+    

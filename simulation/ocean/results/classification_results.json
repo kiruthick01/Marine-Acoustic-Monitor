@@ -1,0 +1,3273 @@
+{
+ "config": {
+  "epochs": 16,
+  "ft_seeds": 3,
+  "width": 24,
+  "skip_train": false,
+  "smoke": false,
+  "neg_frac": 0.5
+ },
+ "tests": {
+  "A_unseen_weather": {
+   "n": 4320,
+   "prevalence": {
+    "is_vessel": 0.13564814814814816,
+    "is_dolphin": 0.08194444444444444,
+    "is_whale": 0.043287037037037034,
+    "is_fish": 0.1685185185185185,
+    "is_airgun": 0.011805555555555555,
+    "storm": 0.1814814814814815,
+    "fault_any": 0.018055555555555554
+   },
+   "n_vessel_typed": 586
+  },
+  "A_unseen_season": {
+   "n": 4320,
+   "prevalence": {
+    "is_vessel": 0.1553240740740741,
+    "is_dolphin": 0.03888888888888889,
+    "is_whale": 0.0,
+    "is_fish": 0.22893518518518519,
+    "is_airgun": 0.007407407407407408,
+    "storm": 0.1738425925925926,
+    "fault_any": 0.016898148148148148
+   },
+   "n_vessel_typed": 671
+  },
+  "B_season1": {
+   "n": 3240,
+   "prevalence": {
+    "is_vessel": 0.05555555555555555,
+    "is_dolphin": 0.05401234567901234,
+    "is_whale": 0.05617283950617284,
+    "is_fish": 0.13024691358024693,
+    "is_airgun": 0.0,
+    "storm": 0.1697530864197531,
+    "fault_any": 0.001851851851851852
+   },
+   "n_vessel_typed": 180
+  },
+  "B_season2": {
+   "n": 3240,
+   "prevalence": {
+    "is_vessel": 0.05339506172839506,
+    "is_dolphin": 0.04506172839506173,
+    "is_whale": 0.012962962962962963,
+    "is_fish": 0.18209876543209877,
+    "is_airgun": 0.0,
+    "storm": 0.009567901234567902,
+    "fault_any": 0.004629629629629629
+   },
+   "n_vessel_typed": 173
+  },
+  "E_season1": {
+   "n": 3240,
+   "prevalence": {
+    "is_vessel": 0.025,
+    "is_dolphin": 0.0345679012345679,
+    "is_whale": 0.07623456790123456,
+    "is_fish": 0.0,
+    "is_airgun": 0.008950617283950617,
+    "storm": 0.0941358024691358,
+    "fault_any": 0.018827160493827162
+   },
+   "n_vessel_typed": 81
+  },
+  "E_season2": {
+   "n": 3240,
+   "prevalence": {
+    "is_vessel": 0.013271604938271606,
+    "is_dolphin": 0.04104938271604938,
+    "is_whale": 0.0,
+    "is_fish": 0.0,
+    "is_airgun": 0.0,
+    "storm": 0.0,
+    "fault_any": 0.021604938271604937
+   },
+   "n_vessel_typed": 43
+  }
+ },
+ "GB-v1-Aonly/A_unseen_weather": {
+  "ap": {
+   "is_vessel": 0.9912106339562283,
+   "is_dolphin": 0.9779819885857626,
+   "is_whale": 0.8493799402794212,
+   "is_fish": 0.9329552459309077,
+   "is_airgun": 0.5593413859856912,
+   "storm": 0.9950236844090757,
+   "fault_any": 0.9998377150275883
+  },
+  "f1": {
+   "is_vessel": 0.9553496208930076,
+   "is_dolphin": 0.9083094555873925,
+   "is_whale": 0.6383838383838384,
+   "is_fish": 0.853185595567867,
+   "is_airgun": 0.5376344086021505,
+   "storm": 0.9520295202952029,
+   "fault_any": 0.9454545454545454
+  },
+  "n_pos": {
+   "is_vessel": 586,
+   "is_dolphin": 354,
+   "is_whale": 187,
+   "is_fish": 728,
+   "is_airgun": 51,
+   "storm": 784,
+   "fault_any": 78
+  },
+  "mAP": 0.9008186563106679,
+  "macroF1": 0.8271924263977148,
+  "fault_recall@1%FPR": {
+   "hum": 1.0,
+   "pops": 1.0,
+   "dropout": 1.0,
+   "stuck_sensor": NaN
+  }
+ },
+ "GB-v1-Aonly/A_unseen_season": {
+  "ap": {
+   "is_vessel": 0.9958069998475761,
+   "is_dolphin": 0.9815071001996338,
+   "is_whale": NaN,
+   "is_fish": 0.9726999831181579,
+   "is_airgun": 0.17701917766888503,
+   "storm": 0.9923509785194276,
+   "fault_any": 0.9988884149276896
+  },
+  "f1": {
+   "is_vessel": 0.9671150971599403,
+   "is_dolphin": 0.935672514619883,
+   "is_whale": NaN,
+   "is_fish": 0.8952080042127436,
+   "is_airgun": 0.24242424242424243,
+   "storm": 0.9415501905972046,
+   "fault_any": 0.9733333333333334
+  },
+  "n_pos": {
+   "is_vessel": 671,
+   "is_dolphin": 168,
+   "is_whale": 0,
+   "is_fish": 989,
+   "is_airgun": 32,
+   "storm": 751,
+   "fault_any": 73
+  },
+  "mAP": 0.8530454423802283,
+  "macroF1": 0.8258838970578912,
+  "fault_recall@1%FPR": {
+   "hum": 1.0,
+   "pops": 1.0,
+   "dropout": 1.0,
+   "stuck_sensor": NaN
+  }
+ },
+ "GB-v1-Aonly/B_season1": {
+  "ap": {
+   "is_vessel": 0.8384093333788624,
+   "is_dolphin": 0.9064575358588669,
+   "is_whale": 0.4810716518256171,
+   "is_fish": 0.5422095814142718,
+   "is_airgun": NaN,
+   "storm": 0.927327184959846,
+   "fault_any": 1.0
+  },
+  "f1": {
+   "is_vessel": 0.7096774193548387,
+   "is_dolphin": 0.7226277372262774,
+   "is_whale": 0.45374449339207046,
+   "is_fish": 0.23382045929018788,
+   "is_airgun": NaN,
+   "storm": 0.8231292517006803,
+   "fault_any": 0.26666666666666666
+  },
+  "n_pos": {
+   "is_vessel": 180,
+   "is_dolphin": 175,
+   "is_whale": 182,
+   "is_fish": 422,
+   "is_airgun": 0,
+   "storm": 550,
+   "fault_any": 6
+  },
+  "mAP": 0.7825792145729107,
+  "macroF1": 0.5349443379384535,
+  "fault_recall@1%FPR": {
+   "hum": NaN,
+   "pops": 1.0,
+   "dropout": NaN,
+   "stuck_sensor": NaN
+  }
+ },
+ "GB-v1-Aonly/B_season2": {
+  "ap": {
+   "is_vessel": 0.8849737980522967,
+   "is_dolphin": 0.9409039031465715,
+   "is_whale": 0.026973992645803444,
+   "is_fish": 0.6627179770042162,
+   "is_airgun": NaN,
+   "storm": 0.42493685555662913,
+   "fault_any": 1.0
+  },
+  "f1": {
+   "is_vessel": 0.6743295019157088,
+   "is_dolphin": 0.7413793103448276,
+   "is_whale": 0.050505050505050504,
+   "is_fish": 0.2647058823529412,
+   "is_airgun": NaN,
+   "storm": 0.12024048096192384,
+   "fault_any": 0.3614457831325301
+  },
+  "n_pos": {
+   "is_vessel": 173,
+   "is_dolphin": 146,
+   "is_whale": 42,
+   "is_fish": 590,
+   "is_airgun": 0,
+   "storm": 31,
+   "fault_any": 15
+  },
+  "mAP": 0.6567510877342528,
+  "macroF1": 0.36876766820216367,
+  "fault_recall@1%FPR": {
+   "hum": 1.0,
+   "pops": NaN,
+   "dropout": NaN,
+   "stuck_sensor": NaN
+  }
+ },
+ "GB-v1-Aonly/E_season1": {
+  "ap": {
+   "is_vessel": 0.9722421326133657,
+   "is_dolphin": 0.9174629480376538,
+   "is_whale": 0.7198735143631771,
+   "is_fish": NaN,
+   "is_airgun": 0.00710716319545981,
+   "storm": 0.9143160183018184,
+   "fault_any": 0.9964024007883185
+  },
+  "f1": {
+   "is_vessel": 0.851063829787234,
+   "is_dolphin": 0.5911949685534591,
+   "is_whale": 0.6605166051660517,
+   "is_fish": NaN,
+   "is_airgun": 0.0,
+   "storm": 0.8168557536466775,
+   "fault_any": 0.6069651741293532
+  },
+  "n_pos": {
+   "is_vessel": 81,
+   "is_dolphin": 112,
+   "is_whale": 247,
+   "is_fish": 0,
+   "is_airgun": 29,
+   "storm": 305,
+   "fault_any": 61
+  },
+  "mAP": 0.7545673628832988,
+  "macroF1": 0.5877660552137959,
+  "fault_recall@1%FPR": {
+   "hum": 1.0,
+   "pops": 1.0,
+   "dropout": 1.0,
+   "stuck_sensor": 1.0
+  }
+ },
+ "GB-v1-Aonly/E_season2": {
+  "ap": {
+   "is_vessel": 0.872912560306924,
+   "is_dolphin": 0.9107881285061907,
+   "is_whale": NaN,
+   "is_fish": NaN,
+   "is_airgun": NaN,
+   "storm": NaN,
+   "fault_any": 0.9947184651108805
+  },
+  "f1": {
+   "is_vessel": 0.676923076923077,
+   "is_dolphin": 0.6217616580310881,
+   "is_whale": NaN,
+   "is_fish": NaN,
+   "is_airgun": NaN,
+   "storm": NaN,
+   "fault_any": 0.717948717948718
+  },
+  "n_pos": {
+   "is_vessel": 43,
+   "is_dolphin": 133,
+   "is_whale": 0,
+   "is_fish": 0,
+   "is_airgun": 0,
+   "storm": 0,
+   "fault_any": 70
+  },
+  "mAP": 0.926139717974665,
+  "macroF1": 0.6722111509676276,
+  "fault_recall@1%FPR": {
+   "hum": 1.0,
+   "pops": 1.0,
+   "dropout": NaN,
+   "stuck_sensor": 1.0
+  }
+ },
+ "GB-v1-multi/A_unseen_weather": {
+  "ap": {
+   "is_vessel": 0.9933918591933343,
+   "is_dolphin": 0.9792866487964615,
+   "is_whale": 0.8505056069411839,
+   "is_fish": 0.9361172639055706,
+   "is_airgun": 0.5004157346716245,
+   "storm": 0.9945027004436467,
+   "fault_any": 0.9995068493121074
+  },
+  "f1": {
+   "is_vessel": 0.9600679694137638,
+   "is_dolphin": 0.9154362416107382,
+   "is_whale": 0.7704081632653061,
+   "is_fish": 0.8584905660377359,
+   "is_airgun": 0.4028776978417266,
+   "storm": 0.9388989715668482,
+   "fault_any": 0.9629629629629629
+  },
+  "n_pos": {
+   "is_vessel": 586,
+   "is_dolphin": 354,
+   "is_whale": 187,
+   "is_fish": 728,
+   "is_airgun": 51,
+   "storm": 784,
+   "fault_any": 78
+  },
+  "mAP": 0.8933895233234184,
+  "macroF1": 0.8298775103855831,
+  "fault_recall@1%FPR": {
+   "hum": 1.0,
+   "pops": 1.0,
+   "dropout": 1.0,
+   "stuck_sensor": NaN
+  }
+ },
+ "GB-v1-multi/A_unseen_season": {
+  "ap": {
+   "is_vessel": 0.9964053574354099,
+   "is_dolphin": 0.9880474804722857,
+   "is_whale": NaN,
+   "is_fish": 0.9761500741863975,
+   "is_airgun": 0.04569268423900588,
+   "storm": 0.9889983244007179,
+   "fault_any": 1.0
+  },
+  "f1": {
+   "is_vessel": 0.9643128321943811,
+   "is_dolphin": 0.9291784702549575,
+   "is_whale": NaN,
+   "is_fish": 0.9169638308711157,
+   "is_airgun": 0.09375,
+   "storm": 0.9317470256731372,
+   "fault_any": 0.9798657718120806
+  },
+  "n_pos": {
+   "is_vessel": 671,
+   "is_dolphin": 168,
+   "is_whale": 0,
+   "is_fish": 989,
+   "is_airgun": 32,
+   "storm": 751,
+   "fault_any": 73
+  },
+  "mAP": 0.8325489867889694,
+  "macroF1": 0.8026363218009452,
+  "fault_recall@1%FPR": {
+   "hum": 1.0,
+   "pops": 1.0,
+   "dropout": 1.0,
+   "stuck_sensor": NaN
+  }
+ },
+ "GB-v1-multi/B_season1": {
+  "ap": {
+   "is_vessel": 0.8535816482739499,
+   "is_dolphin": 0.9415554100026896,
+   "is_whale": 0.5480347575399352,
+   "is_fish": 0.657231874151976,
+   "is_airgun": NaN,
+   "storm": 0.9687013248953195,
+   "fault_any": 0.8666666666666667
+  },
+  "f1": {
+   "is_vessel": 0.6046511627906976,
+   "is_dolphin": 0.8609625668449198,
+   "is_whale": 0.5053191489361702,
+   "is_fish": 0.2301255230125523,
+   "is_airgun": NaN,
+   "storm": 0.8523543495610535,
+   "fault_any": 0.1188118811881188
+  },
+  "n_pos": {
+   "is_vessel": 180,
+   "is_dolphin": 175,
+   "is_whale": 182,
+   "is_fish": 422,
+   "is_airgun": 0,
+   "storm": 550,
+   "fault_any": 6
+  },
+  "mAP": 0.805961946921756,
+  "macroF1": 0.5287041053889187,
+  "fault_recall@1%FPR": {
+   "hum": NaN,
+   "pops": 1.0,
+   "dropout": NaN,
+   "stuck_sensor": NaN
+  }
+ },
+ "GB-v1-multi/B_season2": {
+  "ap": {
+   "is_vessel": 0.8048953068685626,
+   "is_dolphin": 0.9732709746175681,
+   "is_whale": 0.0959721450990625,
+   "is_fish": 0.758630459054219,
+   "is_airgun": NaN,
+   "storm": 0.6760222876380093,
+   "fault_any": 1.0
+  },
+  "f1": {
+   "is_vessel": 0.5338983050847458,
+   "is_dolphin": 0.8888888888888888,
+   "is_whale": 0.11864406779661017,
+   "is_fish": 0.27232796486090777,
+   "is_airgun": NaN,
+   "storm": 0.3973509933774834,
+   "fault_any": 0.3225806451612903
+  },
+  "n_pos": {
+   "is_vessel": 173,
+   "is_dolphin": 146,
+   "is_whale": 42,
+   "is_fish": 590,
+   "is_airgun": 0,
+   "storm": 31,
+   "fault_any": 15
+  },
+  "mAP": 0.7181318622129035,
+  "macroF1": 0.4222818108616544,
+  "fault_recall@1%FPR": {
+   "hum": 1.0,
+   "pops": NaN,
+   "dropout": NaN,
+   "stuck_sensor": NaN
+  }
+ },
+ "GB-v1-multi/E_season1": {
+  "ap": {
+   "is_vessel": 0.9140695142344152,
+   "is_dolphin": 0.9923046848708748,
+   "is_whale": 0.8890762675702056,
+   "is_fish": NaN,
+   "is_airgun": 0.009051186017478152,
+   "storm": 0.9819014362701983,
+   "fault_any": 1.0
+  },
+  "f1": {
+   "is_vessel": 0.734375,
+   "is_dolphin": 0.9523809523809523,
+   "is_whale": 0.8149779735682819,
+   "is_fish": NaN,
+   "is_airgun": 0.0,
+   "storm": 0.9152542372881356,
+   "fault_any": 0.7393939393939394
+  },
+  "n_pos": {
+   "is_vessel": 81,
+   "is_dolphin": 112,
+   "is_whale": 247,
+   "is_fish": 0,
+   "is_airgun": 29,
+   "storm": 305,
+   "fault_any": 61
+  },
+  "mAP": 0.7977338481605288,
+  "macroF1": 0.6927303504385516,
+  "fault_recall@1%FPR": {
+   "hum": 1.0,
+   "pops": 1.0,
+   "dropout": 1.0,
+   "stuck_sensor": 1.0
+  }
+ },
+ "GB-v1-multi/E_season2": {
+  "ap": {
+   "is_vessel": 0.7943241841211661,
+   "is_dolphin": 0.9974924094325944,
+   "is_whale": NaN,
+   "is_fish": NaN,
+   "is_airgun": NaN,
+   "storm": NaN,
+   "fault_any": 1.0
+  },
+  "f1": {
+   "is_vessel": 0.6129032258064516,
+   "is_dolphin": 0.9701492537313433,
+   "is_whale": NaN,
+   "is_fish": NaN,
+   "is_airgun": NaN,
+   "storm": NaN,
+   "fault_any": 0.9929078014184397
+  },
+  "n_pos": {
+   "is_vessel": 43,
+   "is_dolphin": 133,
+   "is_whale": 0,
+   "is_fish": 0,
+   "is_airgun": 0,
+   "storm": 0,
+   "fault_any": 70
+  },
+  "mAP": 0.9306055311845869,
+  "macroF1": 0.8586534269854115,
+  "fault_recall@1%FPR": {
+   "hum": 1.0,
+   "pops": 1.0,
+   "dropout": NaN,
+   "stuck_sensor": 1.0
+  }
+ },
+ "GB-v2-multi/A_unseen_weather": {
+  "ap": {
+   "is_vessel": 0.9945572845675825,
+   "is_dolphin": 0.9785354160761054,
+   "is_whale": 0.8774857184244509,
+   "is_fish": 0.9457568630165933,
+   "is_airgun": 0.5319083354623304,
+   "storm": 0.99293068735883,
+   "fault_any": 0.9999999999999998
+  },
+  "f1": {
+   "is_vessel": 0.9612794612794613,
+   "is_dolphin": 0.9205020920502092,
+   "is_whale": 0.8136482939632546,
+   "is_fish": 0.8647594278283485,
+   "is_airgun": 0.4778761061946903,
+   "storm": 0.9396135265700483,
+   "fault_any": 0.9936305732484076
+  },
+  "n_pos": {
+   "is_vessel": 586,
+   "is_dolphin": 354,
+   "is_whale": 187,
+   "is_fish": 728,
+   "is_airgun": 51,
+   "storm": 784,
+   "fault_any": 78
+  },
+  "mAP": 0.9030249007008418,
+  "macroF1": 0.8530442115906315,
+  "fault_recall@1%FPR": {
+   "hum": 1.0,
+   "pops": 1.0,
+   "dropout": 1.0,
+   "stuck_sensor": NaN
+  }
+ },
+ "GB-v2-multi/A_unseen_season": {
+  "ap": {
+   "is_vessel": 0.9964893069332141,
+   "is_dolphin": 0.9874508859208325,
+   "is_whale": NaN,
+   "is_fish": 0.9767868009539594,
+   "is_airgun": 0.048279862125721676,
+   "storm": 0.9879891671695586,
+   "fault_any": 1.0000000000000002
+  },
+  "f1": {
+   "is_vessel": 0.9715994020926756,
+   "is_dolphin": 0.9404761904761905,
+   "is_whale": NaN,
+   "is_fish": 0.9157472417251755,
+   "is_airgun": 0.029850746268656716,
+   "storm": 0.935687263556116,
+   "fault_any": 1.0
+  },
+  "n_pos": {
+   "is_vessel": 671,
+   "is_dolphin": 168,
+   "is_whale": 0,
+   "is_fish": 989,
+   "is_airgun": 32,
+   "storm": 751,
+   "fault_any": 73
+  },
+  "mAP": 0.8328326705172144,
+  "macroF1": 0.7988934740198025,
+  "fault_recall@1%FPR": {
+   "hum": 1.0,
+   "pops": 1.0,
+   "dropout": 1.0,
+   "stuck_sensor": NaN
+  }
+ },
+ "GB-v2-multi/B_season1": {
+  "ap": {
+   "is_vessel": 0.8712550297941003,
+   "is_dolphin": 0.9431176313133692,
+   "is_whale": 0.5473075486911136,
+   "is_fish": 0.7862185345746144,
+   "is_airgun": NaN,
+   "storm": 0.9761383956234939,
+   "fault_any": 1.0
+  },
+  "f1": {
+   "is_vessel": 0.6046511627906976,
+   "is_dolphin": 0.8985507246376812,
+   "is_whale": 0.4879356568364611,
+   "is_fish": 0.409683426443203,
+   "is_airgun": NaN,
+   "storm": 0.8656476267095736,
+   "fault_any": 1.0
+  },
+  "n_pos": {
+   "is_vessel": 180,
+   "is_dolphin": 175,
+   "is_whale": 182,
+   "is_fish": 422,
+   "is_airgun": 0,
+   "storm": 550,
+   "fault_any": 6
+  },
+  "mAP": 0.8540061899994486,
+  "macroF1": 0.7110780995696029,
+  "fault_recall@1%FPR": {
+   "hum": NaN,
+   "pops": 1.0,
+   "dropout": NaN,
+   "stuck_sensor": NaN
+  }
+ },
+ "GB-v2-multi/B_season2": {
+  "ap": {
+   "is_vessel": 0.8348455477831661,
+   "is_dolphin": 0.9721082285907536,
+   "is_whale": 0.10444398095567069,
+   "is_fish": 0.8714991331562532,
+   "is_airgun": NaN,
+   "storm": 0.7451349513032455,
+   "fault_any": 1.0
+  },
+  "f1": {
+   "is_vessel": 0.540084388185654,
+   "is_dolphin": 0.9084507042253521,
+   "is_whale": 0.15841584158415842,
+   "is_fish": 0.4228723404255319,
+   "is_airgun": NaN,
+   "storm": 0.42857142857142855,
+   "fault_any": 1.0
+  },
+  "n_pos": {
+   "is_vessel": 173,
+   "is_dolphin": 146,
+   "is_whale": 42,
+   "is_fish": 590,
+   "is_airgun": 0,
+   "storm": 31,
+   "fault_any": 15
+  },
+  "mAP": 0.754671973631515,
+  "macroF1": 0.5763991171653541,
+  "fault_recall@1%FPR": {
+   "hum": 1.0,
+   "pops": NaN,
+   "dropout": NaN,
+   "stuck_sensor": NaN
+  }
+ },
+ "GB-v2-multi/E_season1": {
+  "ap": {
+   "is_vessel": 0.8739841379158538,
+   "is_dolphin": 0.9941235820957054,
+   "is_whale": 0.9046486767561407,
+   "is_fish": NaN,
+   "is_airgun": 0.009048361934477379,
+   "storm": 0.986189360522226,
+   "fault_any": 1.0
+  },
+  "f1": {
+   "is_vessel": 0.7441860465116279,
+   "is_dolphin": 0.9688888888888889,
+   "is_whale": 0.8203991130820399,
+   "is_fish": NaN,
+   "is_airgun": 0.0,
+   "storm": 0.9233176838810642,
+   "fault_any": 1.0
+  },
+  "n_pos": {
+   "is_vessel": 81,
+   "is_dolphin": 112,
+   "is_whale": 247,
+   "is_fish": 0,
+   "is_airgun": 29,
+   "storm": 305,
+   "fault_any": 61
+  },
+  "mAP": 0.7946656865374006,
+  "macroF1": 0.7427986220606035,
+  "fault_recall@1%FPR": {
+   "hum": 1.0,
+   "pops": 1.0,
+   "dropout": 1.0,
+   "stuck_sensor": 1.0
+  }
+ },
+ "GB-v2-multi/E_season2": {
+  "ap": {
+   "is_vessel": 0.718621139460455,
+   "is_dolphin": 0.9969666313583914,
+   "is_whale": NaN,
+   "is_fish": NaN,
+   "is_airgun": NaN,
+   "storm": NaN,
+   "fault_any": 0.9999999999999998
+  },
+  "f1": {
+   "is_vessel": 0.5666666666666667,
+   "is_dolphin": 0.9772727272727273,
+   "is_whale": NaN,
+   "is_fish": NaN,
+   "is_airgun": NaN,
+   "storm": NaN,
+   "fault_any": 1.0
+  },
+  "n_pos": {
+   "is_vessel": 43,
+   "is_dolphin": 133,
+   "is_whale": 0,
+   "is_fish": 0,
+   "is_airgun": 0,
+   "storm": 0,
+   "fault_any": 70
+  },
+  "mAP": 0.9051959236062821,
+  "macroF1": 0.847979797979798,
+  "fault_recall@1%FPR": {
+   "hum": 1.0,
+   "pops": 1.0,
+   "dropout": NaN,
+   "stuck_sensor": 1.0
+  }
+ },
+ "history/Aonly-v1": [
+  [
+   1.1302395095805633,
+   0.607243033366544
+  ],
+  [
+   0.8181413676445574,
+   0.7080583302811891
+  ],
+  [
+   0.6731571625455122,
+   0.7768977341609328
+  ],
+  [
+   0.6009483708155262,
+   0.876887819181771
+  ],
+  [
+   0.5558223061503956,
+   0.8909898464167111
+  ],
+  [
+   0.5267543148169669,
+   0.8427738742058465
+  ],
+  [
+   0.5027117965054599,
+   0.871665253332752
+  ],
+  [
+   0.49722829168658916,
+   0.8893847440652213
+  ],
+  [
+   0.48156461815557006,
+   0.8933960930088861
+  ],
+  [
+   0.45675186341505963,
+   0.8740350224566384
+  ],
+  [
+   0.43895565286776034,
+   0.9150675866296734
+  ],
+  [
+   0.43168039500468824,
+   0.9007918374290409
+  ],
+  [
+   0.4142520589024334,
+   0.8963100827343833
+  ],
+  [
+   0.39471633378583587,
+   0.8936467021721072
+  ],
+  [
+   0.39118072476800997,
+   0.9015214810926848
+  ],
+  [
+   0.38381988785261323,
+   0.8959545920017045
+  ]
+ ],
+ "CNN-Aonly-v1/A_unseen_weather": {
+  "ap": {
+   "is_vessel": 0.9884967331572706,
+   "is_dolphin": 0.985324338890269,
+   "is_whale": 0.9760359586458979,
+   "is_fish": 0.9439096685201058,
+   "is_airgun": 0.9857685009487666,
+   "storm": 0.968224740035998,
+   "fault_any": 1.0
+  },
+  "f1": {
+   "is_vessel": 0.9524647887323944,
+   "is_dolphin": 0.9139072847682119,
+   "is_whale": 0.936986301369863,
+   "is_fish": 0.8454349388928828,
+   "is_airgun": 0.98,
+   "storm": 0.8724656638325703,
+   "fault_any": 0.9936305732484076
+  },
+  "n_pos": {
+   "is_vessel": 586,
+   "is_dolphin": 354,
+   "is_whale": 187,
+   "is_fish": 728,
+   "is_airgun": 51,
+   "storm": 784,
+   "fault_any": 78
+  },
+  "mAP": 0.9782514200283297,
+  "macroF1": 0.9278413644063327,
+  "fault_recall@1%FPR": {
+   "hum": 1.0,
+   "pops": 1.0,
+   "dropout": 1.0,
+   "stuck_sensor": NaN
+  },
+  "vessel_type_acc": 0.5307167235494881,
+  "vessel_type_macroF1": 0.627077819219536,
+  "vessel_family_acc": 0.8873720136518771,
+  "cargo_vs_tanker_acc": 0.527114967462039,
+  "cargo_vs_tanker_auc": 0.5496099785205562,
+  "vessel_type_acc_snr>=20dB": 0.6076923076923076
+ },
+ "CNN-Aonly-v1/A_unseen_season": {
+  "ap": {
+   "is_vessel": 0.9921550000558597,
+   "is_dolphin": 0.9867988109552052,
+   "is_whale": NaN,
+   "is_fish": 0.9748489086001663,
+   "is_airgun": 0.8947046363312987,
+   "storm": 0.936809832765739,
+   "fault_any": 1.0000000000000002
+  },
+  "f1": {
+   "is_vessel": 0.9696509863429439,
+   "is_dolphin": 0.9192200557103064,
+   "is_whale": NaN,
+   "is_fish": 0.9021406727828746,
+   "is_airgun": 0.896551724137931,
+   "storm": 0.8523489932885906,
+   "fault_any": 0.9358974358974359
+  },
+  "n_pos": {
+   "is_vessel": 671,
+   "is_dolphin": 168,
+   "is_whale": 0,
+   "is_fish": 989,
+   "is_airgun": 32,
+   "storm": 751,
+   "fault_any": 73
+  },
+  "mAP": 0.9642195314513781,
+  "macroF1": 0.9126349780266804,
+  "fault_recall@1%FPR": {
+   "hum": 1.0,
+   "pops": 1.0,
+   "dropout": 1.0,
+   "stuck_sensor": NaN
+  },
+  "vessel_type_acc": 0.4783904619970194,
+  "vessel_type_macroF1": 0.5948911020568137,
+  "vessel_family_acc": 0.910581222056632,
+  "cargo_vs_tanker_acc": 0.5017064846416383,
+  "cargo_vs_tanker_auc": 0.5032907196969698,
+  "vessel_type_acc_snr>=20dB": 0.4861111111111111
+ },
+ "CNN-Aonly-v1/B_season1": {
+  "ap": {
+   "is_vessel": 0.9111807670189259,
+   "is_dolphin": 0.9364832463111894,
+   "is_whale": 0.9740520247887362,
+   "is_fish": 0.9169534161992966,
+   "is_airgun": NaN,
+   "storm": 0.928615665881494,
+   "fault_any": 1.0
+  },
+  "f1": {
+   "is_vessel": 0.8,
+   "is_dolphin": 0.8835820895522388,
+   "is_whale": 0.898936170212766,
+   "is_fish": 0.8295165394402035,
+   "is_airgun": NaN,
+   "storm": 0.6940346375881976,
+   "fault_any": 1.0
+  },
+  "n_pos": {
+   "is_vessel": 180,
+   "is_dolphin": 175,
+   "is_whale": 182,
+   "is_fish": 422,
+   "is_airgun": 0,
+   "storm": 550,
+   "fault_any": 6
+  },
+  "mAP": 0.9445475200332737,
+  "macroF1": 0.851011572798901,
+  "fault_recall@1%FPR": {
+   "hum": NaN,
+   "pops": 1.0,
+   "dropout": NaN,
+   "stuck_sensor": NaN
+  },
+  "vessel_type_acc": 0.5111111111111111,
+  "vessel_type_macroF1": 0.5405682209087782,
+  "vessel_family_acc": 0.8888888888888888,
+  "cargo_vs_tanker_acc": 0.5416666666666666,
+  "cargo_vs_tanker_auc": 0.5453654712913972,
+  "vessel_type_acc_snr>=20dB": 0.6111111111111112
+ },
+ "CNN-Aonly-v1+AdaBN/B_season1": {
+  "ap": {
+   "is_vessel": 0.9728610242669087,
+   "is_dolphin": 0.9763851598471365,
+   "is_whale": 0.9494417842507721,
+   "is_fish": 0.9364416360710637,
+   "is_airgun": NaN,
+   "storm": 0.8677100012700582,
+   "fault_any": 1.0
+  },
+  "f1": {
+   "is_vessel": 0.9235294117647059,
+   "is_dolphin": 0.9136490250696379,
+   "is_whale": 0.8258064516129032,
+   "is_fish": 0.8142707240293809,
+   "is_airgun": NaN,
+   "storm": 0.6082589285714286,
+   "fault_any": 1.0
+  },
+  "n_pos": {
+   "is_vessel": 180,
+   "is_dolphin": 175,
+   "is_whale": 182,
+   "is_fish": 422,
+   "is_airgun": 0,
+   "storm": 550,
+   "fault_any": 6
+  },
+  "mAP": 0.9504732676176566,
+  "macroF1": 0.8475857568413429,
+  "fault_recall@1%FPR": {
+   "hum": NaN,
+   "pops": 1.0,
+   "dropout": NaN,
+   "stuck_sensor": NaN
+  },
+  "vessel_type_acc": 0.5444444444444444,
+  "vessel_type_macroF1": 0.5657563025210084,
+  "vessel_family_acc": 0.8833333333333333,
+  "cargo_vs_tanker_acc": 0.5625,
+  "cargo_vs_tanker_auc": 0.5304722712130119,
+  "vessel_type_acc_snr>=20dB": 0.6388888888888888
+ },
+ "CNN-Aonly-v1/B_season2": {
+  "ap": {
+   "is_vessel": 0.9003819873692489,
+   "is_dolphin": 0.9579569386329467,
+   "is_whale": 0.9539660851025562,
+   "is_fish": 0.9529693191003066,
+   "is_airgun": NaN,
+   "storm": 0.572747911672258,
+   "fault_any": 1.0
+  },
+  "f1": {
+   "is_vessel": 0.7553956834532374,
+   "is_dolphin": 0.9411764705882353,
+   "is_whale": 0.891566265060241,
+   "is_fish": 0.8810344827586207,
+   "is_airgun": NaN,
+   "storm": 0.13071895424836602,
+   "fault_any": 1.0
+  },
+  "n_pos": {
+   "is_vessel": 173,
+   "is_dolphin": 146,
+   "is_whale": 42,
+   "is_fish": 590,
+   "is_airgun": 0,
+   "storm": 31,
+   "fault_any": 15
+  },
+  "mAP": 0.8896703736462195,
+  "macroF1": 0.7666486426847833,
+  "fault_recall@1%FPR": {
+   "hum": 1.0,
+   "pops": NaN,
+   "dropout": NaN,
+   "stuck_sensor": NaN
+  },
+  "vessel_type_acc": 0.4682080924855491,
+  "vessel_type_macroF1": 0.4795823761925456,
+  "vessel_family_acc": 0.8670520231213873,
+  "cargo_vs_tanker_acc": 0.5217391304347826,
+  "cargo_vs_tanker_auc": 0.48929456840207347,
+  "vessel_type_acc_snr>=20dB": 0.56
+ },
+ "CNN-Aonly-v1+AdaBN/B_season2": {
+  "ap": {
+   "is_vessel": 0.8825411924956165,
+   "is_dolphin": 0.947126749507844,
+   "is_whale": 0.9622346629964765,
+   "is_fish": 0.9666299532376588,
+   "is_airgun": NaN,
+   "storm": 0.6354647494357216,
+   "fault_any": 1.0
+  },
+  "f1": {
+   "is_vessel": 0.6743295019157088,
+   "is_dolphin": 0.9271523178807947,
+   "is_whale": 0.8080808080808081,
+   "is_fish": 0.7711640211640212,
+   "is_airgun": NaN,
+   "storm": 0.5,
+   "fault_any": 0.6382978723404256
+  },
+  "n_pos": {
+   "is_vessel": 173,
+   "is_dolphin": 146,
+   "is_whale": 42,
+   "is_fish": 590,
+   "is_airgun": 0,
+   "storm": 31,
+   "fault_any": 15
+  },
+  "mAP": 0.8989995512788863,
+  "macroF1": 0.719837420230293,
+  "fault_recall@1%FPR": {
+   "hum": 1.0,
+   "pops": NaN,
+   "dropout": NaN,
+   "stuck_sensor": NaN
+  },
+  "vessel_type_acc": 0.3988439306358382,
+  "vessel_type_macroF1": 0.5102188701567584,
+  "vessel_family_acc": 0.7514450867052023,
+  "cargo_vs_tanker_acc": 0.4855072463768116,
+  "cargo_vs_tanker_auc": 0.5244534595447374,
+  "vessel_type_acc_snr>=20dB": 0.36
+ },
+ "CNN-Aonly-v1/E_season1": {
+  "ap": {
+   "is_vessel": 0.9951776084265682,
+   "is_dolphin": 0.9648899011388693,
+   "is_whale": 0.9902146652782716,
+   "is_fish": NaN,
+   "is_airgun": 0.9757183474792805,
+   "storm": 0.8516197471575415,
+   "fault_any": 0.5264809655681403
+  },
+  "f1": {
+   "is_vessel": 0.9271523178807947,
+   "is_dolphin": 0.9545454545454546,
+   "is_whale": 0.8741007194244604,
+   "is_fish": NaN,
+   "is_airgun": 0.9333333333333333,
+   "storm": 0.5781710914454278,
+   "fault_any": 0.6739130434782609
+  },
+  "n_pos": {
+   "is_vessel": 81,
+   "is_dolphin": 112,
+   "is_whale": 247,
+   "is_fish": 0,
+   "is_airgun": 29,
+   "storm": 305,
+   "fault_any": 61
+  },
+  "mAP": 0.8840168725081119,
+  "macroF1": 0.8235359933512885,
+  "fault_recall@1%FPR": {
+   "hum": 1.0,
+   "pops": 1.0,
+   "dropout": 1.0,
+   "stuck_sensor": 0.0
+  },
+  "vessel_type_acc": 0.4074074074074074,
+  "vessel_type_macroF1": 0.5298765432098765,
+  "vessel_family_acc": 0.9382716049382716,
+  "cargo_vs_tanker_acc": 0.5135135135135135,
+  "cargo_vs_tanker_auc": 0.44055944055944063,
+  "vessel_type_acc_snr>=20dB": 0.25
+ },
+ "CNN-Aonly-v1+AdaBN/E_season1": {
+  "ap": {
+   "is_vessel": 0.9816278014310496,
+   "is_dolphin": 0.954946534325191,
+   "is_whale": 0.9560189361549041,
+   "is_fish": NaN,
+   "is_airgun": 0.8575565963841473,
+   "storm": 0.7526544751682275,
+   "fault_any": 0.5297896710295646
+  },
+  "f1": {
+   "is_vessel": 0.9101123595505618,
+   "is_dolphin": 0.9422222222222222,
+   "is_whale": 0.807495741056218,
+   "is_fish": NaN,
+   "is_airgun": 0.6170212765957447,
+   "storm": 0.5054151624548736,
+   "fault_any": 0.47692307692307695
+  },
+  "n_pos": {
+   "is_vessel": 81,
+   "is_dolphin": 112,
+   "is_whale": 247,
+   "is_fish": 0,
+   "is_airgun": 29,
+   "storm": 305,
+   "fault_any": 61
+  },
+  "mAP": 0.8387656690821806,
+  "macroF1": 0.7098649731337829,
+  "fault_recall@1%FPR": {
+   "hum": 1.0,
+   "pops": 1.0,
+   "dropout": 1.0,
+   "stuck_sensor": 0.0
+  },
+  "vessel_type_acc": 0.38271604938271603,
+  "vessel_type_macroF1": 0.4401515151515152,
+  "vessel_family_acc": 0.7160493827160493,
+  "cargo_vs_tanker_acc": 0.5945945945945946,
+  "cargo_vs_tanker_auc": 0.368006993006993,
+  "vessel_type_acc_snr>=20dB": 0.25
+ },
+ "CNN-Aonly-v1/E_season2": {
+  "ap": {
+   "is_vessel": 0.9920995084035681,
+   "is_dolphin": 0.9046093612446972,
+   "is_whale": NaN,
+   "is_fish": NaN,
+   "is_airgun": NaN,
+   "storm": NaN,
+   "fault_any": 0.6070731036886884
+  },
+  "f1": {
+   "is_vessel": 0.925,
+   "is_dolphin": 0.9163346613545816,
+   "is_whale": NaN,
+   "is_fish": NaN,
+   "is_airgun": NaN,
+   "storm": NaN,
+   "fault_any": 0.7272727272727273
+  },
+  "n_pos": {
+   "is_vessel": 43,
+   "is_dolphin": 133,
+   "is_whale": 0,
+   "is_fish": 0,
+   "is_airgun": 0,
+   "storm": 0,
+   "fault_any": 70
+  },
+  "mAP": 0.8345939911123179,
+  "macroF1": 0.8562024628757697,
+  "fault_recall@1%FPR": {
+   "hum": 1.0,
+   "pops": 1.0,
+   "dropout": NaN,
+   "stuck_sensor": 0.0
+  },
+  "vessel_type_acc": 0.5581395348837209,
+  "vessel_type_macroF1": 0.6563427109974425,
+  "vessel_family_acc": 0.8372093023255814,
+  "cargo_vs_tanker_acc": 0.5806451612903226,
+  "cargo_vs_tanker_auc": 0.6974789915966386
+ },
+ "CNN-Aonly-v1+AdaBN/E_season2": {
+  "ap": {
+   "is_vessel": 0.932413006566328,
+   "is_dolphin": 0.8847818150109598,
+   "is_whale": NaN,
+   "is_fish": NaN,
+   "is_airgun": NaN,
+   "storm": NaN,
+   "fault_any": 0.5848713270788718
+  },
+  "f1": {
+   "is_vessel": 0.7692307692307693,
+   "is_dolphin": 0.921875,
+   "is_whale": NaN,
+   "is_fish": NaN,
+   "is_airgun": NaN,
+   "storm": NaN,
+   "fault_any": 0.625
+  },
+  "n_pos": {
+   "is_vessel": 43,
+   "is_dolphin": 133,
+   "is_whale": 0,
+   "is_fish": 0,
+   "is_airgun": 0,
+   "storm": 0,
+   "fault_any": 70
+  },
+  "mAP": 0.8006887162187198,
+  "macroF1": 0.7720352564102564,
+  "fault_recall@1%FPR": {
+   "hum": 1.0,
+   "pops": 1.0,
+   "dropout": NaN,
+   "stuck_sensor": 0.0
+  },
+  "vessel_type_acc": 0.4418604651162791,
+  "vessel_type_macroF1": 0.5121124031007752,
+  "vessel_family_acc": 0.7674418604651163,
+  "cargo_vs_tanker_acc": 0.5483870967741935,
+  "cargo_vs_tanker_auc": 0.542016806722689
+ },
+ "history/Aonly-v2": [
+  [
+   1.0898899286440173,
+   0.6531145091622654
+  ],
+  [
+   0.726783799205179,
+   0.772093140404556
+  ],
+  [
+   0.5613555723884072,
+   0.8128522239181663
+  ],
+  [
+   0.4691884745838029,
+   0.8653922077190684
+  ],
+  [
+   0.451779454434337,
+   0.9097174792235928
+  ],
+  [
+   0.4094004085487161,
+   0.8993057173467048
+  ],
+  [
+   0.39743913785292284,
+   0.9033611867972466
+  ],
+  [
+   0.3842238583028389,
+   0.931876585228604
+  ],
+  [
+   0.3583075965980109,
+   0.913667536853535
+  ],
+  [
+   0.33990988842477976,
+   0.9405543356450713
+  ],
+  [
+   0.33946233764761685,
+   0.924431023650114
+  ],
+  [
+   0.32597790571072766,
+   0.9162825634442547
+  ],
+  [
+   0.3171987093358072,
+   0.9150603235283274
+  ],
+  [
+   0.31224035722398613,
+   0.928896396253939
+  ],
+  [
+   0.30765360252947616,
+   0.9283940588594904
+  ],
+  [
+   0.3052473256802503,
+   0.9373185052862893
+  ]
+ ],
+ "CNN-Aonly-v2/A_unseen_weather": {
+  "ap": {
+   "is_vessel": 0.9849837923237115,
+   "is_dolphin": 0.9840341235182081,
+   "is_whale": 0.9778796197673758,
+   "is_fish": 0.9415700674459898,
+   "is_airgun": 0.9335496281080181,
+   "storm": 0.9685009992321622,
+   "fault_any": 0.9999999999999999
+  },
+  "f1": {
+   "is_vessel": 0.9459459459459459,
+   "is_dolphin": 0.9333333333333333,
+   "is_whale": 0.9442970822281167,
+   "is_fish": 0.8687285223367698,
+   "is_airgun": 0.8775510204081632,
+   "storm": 0.8853754940711462,
+   "fault_any": 0.9811320754716981
+  },
+  "n_pos": {
+   "is_vessel": 586,
+   "is_dolphin": 354,
+   "is_whale": 187,
+   "is_fish": 728,
+   "is_airgun": 51,
+   "storm": 784,
+   "fault_any": 78
+  },
+  "mAP": 0.970074032913638,
+  "macroF1": 0.9194804962564532,
+  "fault_recall@1%FPR": {
+   "hum": 1.0,
+   "pops": 1.0,
+   "dropout": 1.0,
+   "stuck_sensor": NaN
+  },
+  "vessel_type_acc": 0.7184300341296929,
+  "vessel_type_macroF1": 0.7752397521968636,
+  "vessel_family_acc": 0.9590443686006825,
+  "cargo_vs_tanker_acc": 0.6789587852494577,
+  "cargo_vs_tanker_auc": 0.7806647322606174,
+  "vessel_type_acc_snr>=20dB": 0.7846153846153846
+ },
+ "CNN-Aonly-v2/A_unseen_season": {
+  "ap": {
+   "is_vessel": 0.9896467835233026,
+   "is_dolphin": 0.9898322699769379,
+   "is_whale": NaN,
+   "is_fish": 0.9742752170423719,
+   "is_airgun": 0.890297060177156,
+   "storm": 0.950957473222805,
+   "fault_any": 1.0
+  },
+  "f1": {
+   "is_vessel": 0.9572271386430679,
+   "is_dolphin": 0.9187675070028011,
+   "is_whale": NaN,
+   "is_fish": 0.908816120906801,
+   "is_airgun": 0.847457627118644,
+   "storm": 0.8648648648648649,
+   "fault_any": 0.9668874172185431
+  },
+  "n_pos": {
+   "is_vessel": 671,
+   "is_dolphin": 168,
+   "is_whale": 0,
+   "is_fish": 989,
+   "is_airgun": 32,
+   "storm": 751,
+   "fault_any": 73
+  },
+  "mAP": 0.9658348006570955,
+  "macroF1": 0.910670112625787,
+  "fault_recall@1%FPR": {
+   "hum": 1.0,
+   "pops": 1.0,
+   "dropout": 1.0,
+   "stuck_sensor": NaN
+  },
+  "vessel_type_acc": 0.6780923994038748,
+  "vessel_type_macroF1": 0.6956764612714239,
+  "vessel_family_acc": 0.940387481371088,
+  "cargo_vs_tanker_acc": 0.6791808873720137,
+  "cargo_vs_tanker_auc": 0.773544034090909,
+  "vessel_type_acc_snr>=20dB": 0.7222222222222222
+ },
+ "CNN-Aonly-v2/B_season1": {
+  "ap": {
+   "is_vessel": 0.9370982318617459,
+   "is_dolphin": 0.9359500021278686,
+   "is_whale": 0.9699380437745092,
+   "is_fish": 0.935589052785444,
+   "is_airgun": NaN,
+   "storm": 0.92193555572456,
+   "fault_any": 1.0
+  },
+  "f1": {
+   "is_vessel": 0.8963414634146342,
+   "is_dolphin": 0.8157894736842105,
+   "is_whale": 0.8785529715762274,
+   "is_fish": 0.8397932816537468,
+   "is_airgun": NaN,
+   "storm": 0.6807151979565773,
+   "fault_any": 1.0
+  },
+  "n_pos": {
+   "is_vessel": 180,
+   "is_dolphin": 175,
+   "is_whale": 182,
+   "is_fish": 422,
+   "is_airgun": 0,
+   "storm": 550,
+   "fault_any": 6
+  },
+  "mAP": 0.9500851477123547,
+  "macroF1": 0.851865398047566,
+  "fault_recall@1%FPR": {
+   "hum": NaN,
+   "pops": 1.0,
+   "dropout": NaN,
+   "stuck_sensor": NaN
+  },
+  "vessel_type_acc": 0.49444444444444446,
+  "vessel_type_macroF1": 0.5364481066975235,
+  "vessel_family_acc": 0.7555555555555555,
+  "cargo_vs_tanker_acc": 0.6111111111111112,
+  "cargo_vs_tanker_auc": 0.8814422888496962,
+  "vessel_type_acc_snr>=20dB": 0.2222222222222222
+ },
+ "CNN-Aonly-v2+AdaBN/B_season1": {
+  "ap": {
+   "is_vessel": 0.985866281601221,
+   "is_dolphin": 0.9805679227518069,
+   "is_whale": 0.9637594693816836,
+   "is_fish": 0.9541057998737643,
+   "is_airgun": NaN,
+   "storm": 0.7869968606066597,
+   "fault_any": 1.0
+  },
+  "f1": {
+   "is_vessel": 0.8774509803921569,
+   "is_dolphin": 0.9265536723163842,
+   "is_whale": 0.6811594202898551,
+   "is_fish": 0.8660022148394242,
+   "is_airgun": NaN,
+   "storm": 0.5997770345596433,
+   "fault_any": 0.9230769230769231
+  },
+  "n_pos": {
+   "is_vessel": 180,
+   "is_dolphin": 175,
+   "is_whale": 182,
+   "is_fish": 422,
+   "is_airgun": 0,
+   "storm": 550,
+   "fault_any": 6
+  },
+  "mAP": 0.9452160557025225,
+  "macroF1": 0.8123367075790644,
+  "fault_recall@1%FPR": {
+   "hum": NaN,
+   "pops": 1.0,
+   "dropout": NaN,
+   "stuck_sensor": NaN
+  },
+  "vessel_type_acc": 0.6333333333333333,
+  "vessel_type_macroF1": 0.6671355172926265,
+  "vessel_family_acc": 0.9055555555555556,
+  "cargo_vs_tanker_acc": 0.6319444444444444,
+  "cargo_vs_tanker_auc": 0.882618067803253,
+  "vessel_type_acc_snr>=20dB": 0.5
+ },
+ "CNN-Aonly-v2/B_season2": {
+  "ap": {
+   "is_vessel": 0.9425648164224316,
+   "is_dolphin": 0.9717822258463635,
+   "is_whale": 0.9589764540039458,
+   "is_fish": 0.9601248646715652,
+   "is_airgun": NaN,
+   "storm": 0.6306712298368492,
+   "fault_any": 1.0
+  },
+  "f1": {
+   "is_vessel": 0.887459807073955,
+   "is_dolphin": 0.8392156862745098,
+   "is_whale": 0.8941176470588236,
+   "is_fish": 0.8917525773195877,
+   "is_airgun": NaN,
+   "storm": 0.15,
+   "fault_any": 1.0
+  },
+  "n_pos": {
+   "is_vessel": 173,
+   "is_dolphin": 146,
+   "is_whale": 42,
+   "is_fish": 590,
+   "is_airgun": 0,
+   "storm": 31,
+   "fault_any": 15
+  },
+  "mAP": 0.910686598463526,
+  "macroF1": 0.7770909529544793,
+  "fault_recall@1%FPR": {
+   "hum": 1.0,
+   "pops": NaN,
+   "dropout": NaN,
+   "stuck_sensor": NaN
+  },
+  "vessel_type_acc": 0.4161849710982659,
+  "vessel_type_macroF1": 0.46139895457956936,
+  "vessel_family_acc": 0.7341040462427746,
+  "cargo_vs_tanker_acc": 0.42028985507246375,
+  "cargo_vs_tanker_auc": 0.8233040342573812,
+  "vessel_type_acc_snr>=20dB": 0.32
+ },
+ "CNN-Aonly-v2+AdaBN/B_season2": {
+  "ap": {
+   "is_vessel": 0.9675891894993741,
+   "is_dolphin": 0.9641650183977806,
+   "is_whale": 0.964600742566037,
+   "is_fish": 0.9683572089206548,
+   "is_airgun": NaN,
+   "storm": 0.6644693855336647,
+   "fault_any": 1.0
+  },
+  "f1": {
+   "is_vessel": 0.9226006191950464,
+   "is_dolphin": 0.9431438127090301,
+   "is_whale": 0.8118811881188119,
+   "is_fish": 0.8775193798449612,
+   "is_airgun": NaN,
+   "storm": 0.5666666666666667,
+   "fault_any": 0.6666666666666666
+  },
+  "n_pos": {
+   "is_vessel": 173,
+   "is_dolphin": 146,
+   "is_whale": 42,
+   "is_fish": 590,
+   "is_airgun": 0,
+   "storm": 31,
+   "fault_any": 15
+  },
+  "mAP": 0.921530257486252,
+  "macroF1": 0.7980797222001973,
+  "fault_recall@1%FPR": {
+   "hum": 1.0,
+   "pops": NaN,
+   "dropout": NaN,
+   "stuck_sensor": NaN
+  },
+  "vessel_type_acc": 0.32947976878612717,
+  "vessel_type_macroF1": 0.4483167366251503,
+  "vessel_family_acc": 0.5549132947976878,
+  "cargo_vs_tanker_acc": 0.38405797101449274,
+  "cargo_vs_tanker_auc": 0.7944557133198107,
+  "vessel_type_acc_snr>=20dB": 0.24
+ },
+ "CNN-Aonly-v2/E_season1": {
+  "ap": {
+   "is_vessel": 0.987922184549247,
+   "is_dolphin": 0.9443973860295244,
+   "is_whale": 0.9855130540227813,
+   "is_fish": NaN,
+   "is_airgun": 0.9705795605002974,
+   "storm": 0.8712015465850326,
+   "fault_any": 1.0
+  },
+  "f1": {
+   "is_vessel": 0.8876404494382022,
+   "is_dolphin": 0.8333333333333334,
+   "is_whale": 0.8901098901098901,
+   "is_fish": NaN,
+   "is_airgun": 0.8888888888888888,
+   "storm": 0.8076923076923077,
+   "fault_any": 1.0
+  },
+  "n_pos": {
+   "is_vessel": 81,
+   "is_dolphin": 112,
+   "is_whale": 247,
+   "is_fish": 0,
+   "is_airgun": 29,
+   "storm": 305,
+   "fault_any": 61
+  },
+  "mAP": 0.9599356219478138,
+  "macroF1": 0.8846108115771036,
+  "fault_recall@1%FPR": {
+   "hum": 1.0,
+   "pops": 1.0,
+   "dropout": 1.0,
+   "stuck_sensor": 1.0
+  },
+  "vessel_type_acc": 0.691358024691358,
+  "vessel_type_macroF1": 0.7086958394349212,
+  "vessel_family_acc": 0.8395061728395061,
+  "cargo_vs_tanker_acc": 0.8378378378378378,
+  "cargo_vs_tanker_auc": 0.9545454545454545,
+  "vessel_type_acc_snr>=20dB": 0.25
+ },
+ "CNN-Aonly-v2+AdaBN/E_season1": {
+  "ap": {
+   "is_vessel": 0.8909270337587365,
+   "is_dolphin": 0.9633309623969711,
+   "is_whale": 0.9792369043374488,
+   "is_fish": NaN,
+   "is_airgun": 0.8192421364366891,
+   "storm": 0.4729349845940213,
+   "fault_any": 0.9652834922549861
+  },
+  "f1": {
+   "is_vessel": 0.7207207207207207,
+   "is_dolphin": 0.9224137931034483,
+   "is_whale": 0.9212598425196851,
+   "is_fish": NaN,
+   "is_airgun": 0.5490196078431373,
+   "storm": 0.38838475499092556,
+   "fault_any": 0.916030534351145
+  },
+  "n_pos": {
+   "is_vessel": 81,
+   "is_dolphin": 112,
+   "is_whale": 247,
+   "is_fish": 0,
+   "is_airgun": 29,
+   "storm": 305,
+   "fault_any": 61
+  },
+  "mAP": 0.8484925856298089,
+  "macroF1": 0.736304875588177,
+  "fault_recall@1%FPR": {
+   "hum": 1.0,
+   "pops": 1.0,
+   "dropout": 1.0,
+   "stuck_sensor": 0.9666666666666667
+  },
+  "vessel_type_acc": 0.691358024691358,
+  "vessel_type_macroF1": 0.6384057971014493,
+  "vessel_family_acc": 0.9506172839506173,
+  "cargo_vs_tanker_acc": 0.7162162162162162,
+  "cargo_vs_tanker_auc": 0.9519230769230769,
+  "vessel_type_acc_snr>=20dB": 0.375
+ },
+ "CNN-Aonly-v2/E_season2": {
+  "ap": {
+   "is_vessel": 0.9720351535030769,
+   "is_dolphin": 0.9140152138879752,
+   "is_whale": NaN,
+   "is_fish": NaN,
+   "is_airgun": NaN,
+   "storm": NaN,
+   "fault_any": 0.9999999999999999
+  },
+  "f1": {
+   "is_vessel": 0.8541666666666666,
+   "is_dolphin": 0.7238095238095238,
+   "is_whale": NaN,
+   "is_fish": NaN,
+   "is_airgun": NaN,
+   "storm": NaN,
+   "fault_any": 1.0
+  },
+  "n_pos": {
+   "is_vessel": 43,
+   "is_dolphin": 133,
+   "is_whale": 0,
+   "is_fish": 0,
+   "is_airgun": 0,
+   "storm": 0,
+   "fault_any": 70
+  },
+  "mAP": 0.9620167891303507,
+  "macroF1": 0.8593253968253968,
+  "fault_recall@1%FPR": {
+   "hum": 1.0,
+   "pops": 1.0,
+   "dropout": NaN,
+   "stuck_sensor": 1.0
+  },
+  "vessel_type_acc": 0.6976744186046512,
+  "vessel_type_macroF1": 0.7589743589743589,
+  "vessel_family_acc": 0.8837209302325582,
+  "cargo_vs_tanker_acc": 0.7419354838709677,
+  "cargo_vs_tanker_auc": 0.9453781512605042
+ },
+ "CNN-Aonly-v2+AdaBN/E_season2": {
+  "ap": {
+   "is_vessel": 0.6663509238914798,
+   "is_dolphin": 0.9421768900960711,
+   "is_whale": NaN,
+   "is_fish": NaN,
+   "is_airgun": NaN,
+   "storm": NaN,
+   "fault_any": 0.9879698314108253
+  },
+  "f1": {
+   "is_vessel": 0.5342465753424658,
+   "is_dolphin": 0.9501915708812261,
+   "is_whale": NaN,
+   "is_fish": NaN,
+   "is_airgun": NaN,
+   "storm": NaN,
+   "fault_any": 0.8023255813953488
+  },
+  "n_pos": {
+   "is_vessel": 43,
+   "is_dolphin": 133,
+   "is_whale": 0,
+   "is_fish": 0,
+   "is_airgun": 0,
+   "storm": 0,
+   "fault_any": 70
+  },
+  "mAP": 0.8654992151327919,
+  "macroF1": 0.7622545758730136,
+  "fault_recall@1%FPR": {
+   "hum": 1.0,
+   "pops": 1.0,
+   "dropout": NaN,
+   "stuck_sensor": 0.9666666666666667
+  },
+  "vessel_type_acc": 0.6511627906976745,
+  "vessel_type_macroF1": 0.6583080040526849,
+  "vessel_family_acc": 0.9767441860465116,
+  "cargo_vs_tanker_acc": 0.5483870967741935,
+  "cargo_vs_tanker_auc": 0.9453781512605042
+ },
+ "history/multi-v1": [
+  [
+   1.0353242781637204,
+   0.7031731396073361
+  ],
+  [
+   0.6652495916742518,
+   0.7992689110847121
+  ],
+  [
+   0.5722458377348931,
+   0.8759839108831328
+  ],
+  [
+   0.5194184381534938,
+   0.8792242549051144
+  ],
+  [
+   0.4902109891392532,
+   0.8687938587168853
+  ],
+  [
+   0.47148414610256784,
+   0.895481784055612
+  ],
+  [
+   0.4588118512060291,
+   0.893209571090661
+  ],
+  [
+   0.44006299135682875,
+   0.8810987440425665
+  ],
+  [
+   0.4223253968067195,
+   0.8954477756360468
+  ],
+  [
+   0.40791638354439275,
+   0.884022335644705
+  ],
+  [
+   0.4048878847574494,
+   0.9022357391789813
+  ],
+  [
+   0.3921615112343684,
+   0.9002315404734531
+  ],
+  [
+   0.3841887210698516,
+   0.9032082579504678
+  ],
+  [
+   0.37055756450443395,
+   0.9028201589493187
+  ],
+  [
+   0.36571474073746735,
+   0.9056779076045064
+  ],
+  [
+   0.3622811574484228,
+   0.9047538702647674
+  ]
+ ],
+ "CNN-multi-v1/A_unseen_weather": {
+  "ap": {
+   "is_vessel": 0.9905990798631888,
+   "is_dolphin": 0.985535352917902,
+   "is_whale": 0.9857685401661003,
+   "is_fish": 0.9627029167767909,
+   "is_airgun": 0.8576358173513872,
+   "storm": 0.9763632316785893,
+   "fault_any": 0.9999999999999998
+  },
+  "f1": {
+   "is_vessel": 0.9345132743362832,
+   "is_dolphin": 0.9327846364883402,
+   "is_whale": 0.9672131147540983,
+   "is_fish": 0.886411149825784,
+   "is_airgun": 0.8695652173913043,
+   "storm": 0.8969072164948454,
+   "fault_any": 1.0
+  },
+  "n_pos": {
+   "is_vessel": 586,
+   "is_dolphin": 354,
+   "is_whale": 187,
+   "is_fish": 728,
+   "is_airgun": 51,
+   "storm": 784,
+   "fault_any": 78
+  },
+  "mAP": 0.9655149912505656,
+  "macroF1": 0.9267706584700938,
+  "fault_recall@1%FPR": {
+   "hum": 1.0,
+   "pops": 1.0,
+   "dropout": 1.0,
+   "stuck_sensor": NaN
+  },
+  "vessel_type_acc": 0.590443686006826,
+  "vessel_type_macroF1": 0.6808271115694298,
+  "vessel_family_acc": 0.9112627986348123,
+  "cargo_vs_tanker_acc": 0.544468546637744,
+  "cargo_vs_tanker_auc": 0.5455778724045672,
+  "vessel_type_acc_snr>=20dB": 0.6461538461538462
+ },
+ "CNN-multi-v1/A_unseen_season": {
+  "ap": {
+   "is_vessel": 0.9955382562210453,
+   "is_dolphin": 0.9899675246487837,
+   "is_whale": NaN,
+   "is_fish": 0.9853106002165326,
+   "is_airgun": 0.8835808183430767,
+   "storm": 0.9711021583917951,
+   "fault_any": 1.0000000000000002
+  },
+  "f1": {
+   "is_vessel": 0.9273301737756714,
+   "is_dolphin": 0.9291784702549575,
+   "is_whale": NaN,
+   "is_fish": 0.9319899244332494,
+   "is_airgun": 0.8421052631578947,
+   "storm": 0.9078947368421053,
+   "fault_any": 1.0
+  },
+  "n_pos": {
+   "is_vessel": 671,
+   "is_dolphin": 168,
+   "is_whale": 0,
+   "is_fish": 989,
+   "is_airgun": 32,
+   "storm": 751,
+   "fault_any": 73
+  },
+  "mAP": 0.9709165596368723,
+  "macroF1": 0.9230830947439798,
+  "fault_recall@1%FPR": {
+   "hum": 1.0,
+   "pops": 1.0,
+   "dropout": 1.0,
+   "stuck_sensor": NaN
+  },
+  "vessel_type_acc": 0.5216095380029806,
+  "vessel_type_macroF1": 0.6164187804149776,
+  "vessel_family_acc": 0.9195230998509687,
+  "cargo_vs_tanker_acc": 0.5511945392491467,
+  "cargo_vs_tanker_auc": 0.5162523674242424,
+  "vessel_type_acc_snr>=20dB": 0.5972222222222222
+ },
+ "CNN-multi-v1/B_season1": {
+  "ap": {
+   "is_vessel": 0.8348457878648091,
+   "is_dolphin": 0.9751294644735458,
+   "is_whale": 0.9903807188483928,
+   "is_fish": 0.9592736410341584,
+   "is_airgun": NaN,
+   "storm": 0.9563163270602008,
+   "fault_any": 1.0
+  },
+  "f1": {
+   "is_vessel": 0.5714285714285714,
+   "is_dolphin": 0.900804289544236,
+   "is_whale": 0.9518413597733711,
+   "is_fish": 0.7756874095513748,
+   "is_airgun": NaN,
+   "storm": 0.8473998294970162,
+   "fault_any": 1.0
+  },
+  "n_pos": {
+   "is_vessel": 180,
+   "is_dolphin": 175,
+   "is_whale": 182,
+   "is_fish": 422,
+   "is_airgun": 0,
+   "storm": 550,
+   "fault_any": 6
+  },
+  "mAP": 0.9526576565468511,
+  "macroF1": 0.8411935766324282,
+  "fault_recall@1%FPR": {
+   "hum": NaN,
+   "pops": 1.0,
+   "dropout": NaN,
+   "stuck_sensor": NaN
+  },
+  "vessel_type_acc": 0.4777777777777778,
+  "vessel_type_macroF1": 0.5206535958913892,
+  "vessel_family_acc": 0.8833333333333333,
+  "cargo_vs_tanker_acc": 0.4930555555555556,
+  "cargo_vs_tanker_auc": 0.5735841661767588,
+  "vessel_type_acc_snr>=20dB": 0.5277777777777778
+ },
+ "CNN-multi-v1+AdaBN/B_season1": {
+  "ap": {
+   "is_vessel": 0.993920289510928,
+   "is_dolphin": 0.982002518994232,
+   "is_whale": 0.9830446017258406,
+   "is_fish": 0.9681992627914218,
+   "is_airgun": NaN,
+   "storm": 0.6224991303276496,
+   "fault_any": 1.0
+  },
+  "f1": {
+   "is_vessel": 0.9540229885057471,
+   "is_dolphin": 0.9142857142857143,
+   "is_whale": 0.7661016949152543,
+   "is_fish": 0.8969555035128806,
+   "is_airgun": NaN,
+   "storm": 0.6025857223159078,
+   "fault_any": 1.0
+  },
+  "n_pos": {
+   "is_vessel": 180,
+   "is_dolphin": 175,
+   "is_whale": 182,
+   "is_fish": 422,
+   "is_airgun": 0,
+   "storm": 550,
+   "fault_any": 6
+  },
+  "mAP": 0.9249443005583453,
+  "macroF1": 0.855658603922584,
+  "fault_recall@1%FPR": {
+   "hum": NaN,
+   "pops": 1.0,
+   "dropout": NaN,
+   "stuck_sensor": NaN
+  },
+  "vessel_type_acc": 0.5555555555555556,
+  "vessel_type_macroF1": 0.6400884325479257,
+  "vessel_family_acc": 0.95,
+  "cargo_vs_tanker_acc": 0.5347222222222222,
+  "cargo_vs_tanker_auc": 0.5173427395649618,
+  "vessel_type_acc_snr>=20dB": 0.5277777777777778
+ },
+ "CNN-multi-v1/B_season2": {
+  "ap": {
+   "is_vessel": 0.9406059402222859,
+   "is_dolphin": 0.993132799010478,
+   "is_whale": 0.973551132437361,
+   "is_fish": 0.9746211638537499,
+   "is_airgun": NaN,
+   "storm": 0.7863494242888024,
+   "fault_any": 0.9958333333333333
+  },
+  "f1": {
+   "is_vessel": 0.4690265486725664,
+   "is_dolphin": 0.9177215189873418,
+   "is_whale": 0.925,
+   "is_fish": 0.8225966303270565,
+   "is_airgun": NaN,
+   "storm": 0.4580152671755725,
+   "fault_any": 0.9285714285714286
+  },
+  "n_pos": {
+   "is_vessel": 173,
+   "is_dolphin": 146,
+   "is_whale": 42,
+   "is_fish": 590,
+   "is_airgun": 0,
+   "storm": 31,
+   "fault_any": 15
+  },
+  "mAP": 0.9440156321910019,
+  "macroF1": 0.7534885656223277,
+  "fault_recall@1%FPR": {
+   "hum": 1.0,
+   "pops": NaN,
+   "dropout": NaN,
+   "stuck_sensor": NaN
+  },
+  "vessel_type_acc": 0.5144508670520231,
+  "vessel_type_macroF1": 0.4798477384684281,
+  "vessel_family_acc": 0.8554913294797688,
+  "cargo_vs_tanker_acc": 0.5507246376811594,
+  "cargo_vs_tanker_auc": 0.43655623168807756,
+  "vessel_type_acc_snr>=20dB": 0.6
+ },
+ "CNN-multi-v1+AdaBN/B_season2": {
+  "ap": {
+   "is_vessel": 0.9280942048909473,
+   "is_dolphin": 0.9897148085042943,
+   "is_whale": 0.9678760832600931,
+   "is_fish": 0.9755553506631242,
+   "is_airgun": NaN,
+   "storm": 0.780767138786294,
+   "fault_any": 1.0
+  },
+  "f1": {
+   "is_vessel": 0.6640926640926641,
+   "is_dolphin": 0.9311475409836065,
+   "is_whale": 0.9032258064516129,
+   "is_fish": 0.878533231474408,
+   "is_airgun": NaN,
+   "storm": 0.32432432432432434,
+   "fault_any": 0.9090909090909091
+  },
+  "n_pos": {
+   "is_vessel": 173,
+   "is_dolphin": 146,
+   "is_whale": 42,
+   "is_fish": 590,
+   "is_airgun": 0,
+   "storm": 31,
+   "fault_any": 15
+  },
+  "mAP": 0.9403345976841254,
+  "macroF1": 0.7684024127362542,
+  "fault_recall@1%FPR": {
+   "hum": 1.0,
+   "pops": NaN,
+   "dropout": NaN,
+   "stuck_sensor": NaN
+  },
+  "vessel_type_acc": 0.4682080924855491,
+  "vessel_type_macroF1": 0.5706951084186553,
+  "vessel_family_acc": 0.8959537572254336,
+  "cargo_vs_tanker_acc": 0.4492753623188406,
+  "cargo_vs_tanker_auc": 0.44354293441514536,
+  "vessel_type_acc_snr>=20dB": 0.6
+ },
+ "CNN-multi-v1/E_season1": {
+  "ap": {
+   "is_vessel": 0.9707204716805494,
+   "is_dolphin": 0.9976320168336521,
+   "is_whale": 0.9946832455635037,
+   "is_fish": NaN,
+   "is_airgun": 0.9787216536436214,
+   "storm": 0.9285298484902823,
+   "fault_any": 0.6188560333094748
+  },
+  "f1": {
+   "is_vessel": 0.6271186440677966,
+   "is_dolphin": 0.9691629955947136,
+   "is_whale": 0.963265306122449,
+   "is_fish": NaN,
+   "is_airgun": 0.9285714285714286,
+   "storm": 0.7971014492753623,
+   "fault_any": 0.6739130434782609
+  },
+  "n_pos": {
+   "is_vessel": 81,
+   "is_dolphin": 112,
+   "is_whale": 247,
+   "is_fish": 0,
+   "is_airgun": 29,
+   "storm": 305,
+   "fault_any": 61
+  },
+  "mAP": 0.9148572115868472,
+  "macroF1": 0.8265221445183352,
+  "fault_recall@1%FPR": {
+   "hum": 1.0,
+   "pops": 1.0,
+   "dropout": 1.0,
+   "stuck_sensor": 0.1
+  },
+  "vessel_type_acc": 0.37037037037037035,
+  "vessel_type_macroF1": 0.48968794835007173,
+  "vessel_family_acc": 0.9506172839506173,
+  "cargo_vs_tanker_acc": 0.3783783783783784,
+  "cargo_vs_tanker_auc": 0.5480769230769231,
+  "vessel_type_acc_snr>=20dB": 0.75
+ },
+ "CNN-multi-v1+AdaBN/E_season1": {
+  "ap": {
+   "is_vessel": 0.9920821731629873,
+   "is_dolphin": 0.9844769573861291,
+   "is_whale": 0.9797939001655043,
+   "is_fish": NaN,
+   "is_airgun": 0.8600098117376493,
+   "storm": 0.3896580656464781,
+   "fault_any": 0.5268963645950893
+  },
+  "f1": {
+   "is_vessel": 0.8938547486033519,
+   "is_dolphin": 0.9166666666666666,
+   "is_whale": 0.9227722772277228,
+   "is_fish": NaN,
+   "is_airgun": 0.6292134831460674,
+   "storm": 0.47554806070826305,
+   "fault_any": 0.5254237288135594
+  },
+  "n_pos": {
+   "is_vessel": 81,
+   "is_dolphin": 112,
+   "is_whale": 247,
+   "is_fish": 0,
+   "is_airgun": 29,
+   "storm": 305,
+   "fault_any": 61
+  },
+  "mAP": 0.7888195454489728,
+  "macroF1": 0.7272464941942719,
+  "fault_recall@1%FPR": {
+   "hum": 1.0,
+   "pops": 1.0,
+   "dropout": 1.0,
+   "stuck_sensor": 0.0
+  },
+  "vessel_type_acc": 0.4444444444444444,
+  "vessel_type_macroF1": 0.45356359649122807,
+  "vessel_family_acc": 0.7777777777777778,
+  "cargo_vs_tanker_acc": 0.6486486486486487,
+  "cargo_vs_tanker_auc": 0.6153846153846153,
+  "vessel_type_acc_snr>=20dB": 0.25
+ },
+ "CNN-multi-v1/E_season2": {
+  "ap": {
+   "is_vessel": 0.7384406386387105,
+   "is_dolphin": 0.9959293216597387,
+   "is_whale": NaN,
+   "is_fish": NaN,
+   "is_airgun": NaN,
+   "storm": NaN,
+   "fault_any": 0.5887712144628985
+  },
+  "f1": {
+   "is_vessel": 0.49122807017543857,
+   "is_dolphin": 0.9812734082397003,
+   "is_whale": NaN,
+   "is_fish": NaN,
+   "is_airgun": NaN,
+   "storm": NaN,
+   "fault_any": 0.7272727272727273
+  },
+  "n_pos": {
+   "is_vessel": 43,
+   "is_dolphin": 133,
+   "is_whale": 0,
+   "is_fish": 0,
+   "is_airgun": 0,
+   "storm": 0,
+   "fault_any": 70
+  },
+  "mAP": 0.7743803915871159,
+  "macroF1": 0.7332580685626221,
+  "fault_recall@1%FPR": {
+   "hum": 1.0,
+   "pops": 1.0,
+   "dropout": NaN,
+   "stuck_sensor": 0.0
+  },
+  "vessel_type_acc": 0.4418604651162791,
+  "vessel_type_macroF1": 0.5230376766091052,
+  "vessel_family_acc": 0.8372093023255814,
+  "cargo_vs_tanker_acc": 0.45161290322580644,
+  "cargo_vs_tanker_auc": 0.634453781512605
+ },
+ "CNN-multi-v1+AdaBN/E_season2": {
+  "ap": {
+   "is_vessel": 0.9765678186825761,
+   "is_dolphin": 0.9831682769690845,
+   "is_whale": NaN,
+   "is_fish": NaN,
+   "is_airgun": NaN,
+   "storm": NaN,
+   "fault_any": 0.6029587835766167
+  },
+  "f1": {
+   "is_vessel": 0.8076923076923077,
+   "is_dolphin": 0.9581749049429658,
+   "is_whale": NaN,
+   "is_fish": NaN,
+   "is_airgun": NaN,
+   "storm": NaN,
+   "fault_any": 0.25
+  },
+  "n_pos": {
+   "is_vessel": 43,
+   "is_dolphin": 133,
+   "is_whale": 0,
+   "is_fish": 0,
+   "is_airgun": 0,
+   "storm": 0,
+   "fault_any": 70
+  },
+  "mAP": 0.8542316264094257,
+  "macroF1": 0.6719557375450912,
+  "fault_recall@1%FPR": {
+   "hum": 1.0,
+   "pops": 1.0,
+   "dropout": NaN,
+   "stuck_sensor": 0.0
+  },
+  "vessel_type_acc": 0.5813953488372093,
+  "vessel_type_macroF1": 0.6259906759906759,
+  "vessel_family_acc": 0.7209302325581395,
+  "cargo_vs_tanker_acc": 0.7419354838709677,
+  "cargo_vs_tanker_auc": 0.8067226890756303
+ },
+ "history/multi-v2": [
+  [
+   1.0181010893250817,
+   0.7499979136616054
+  ],
+  [
+   0.5704998556800239,
+   0.8866371228078437
+  ],
+  [
+   0.4452721411276611,
+   0.9094170704765129
+  ],
+  [
+   0.39632803143809503,
+   0.9393593334806042
+  ],
+  [
+   0.36577911153700926,
+   0.9327637779783703
+  ],
+  [
+   0.34867334471794453,
+   0.9440857512671001
+  ],
+  [
+   0.33883748276158393,
+   0.9398423369426953
+  ],
+  [
+   0.3326550002931573,
+   0.9526398641562508
+  ],
+  [
+   0.32135936578033997,
+   0.9561561589056786
+  ],
+  [
+   0.31280734417954453,
+   0.9571961818630573
+  ],
+  [
+   0.2984421488897716,
+   0.9626562965342853
+  ],
+  [
+   0.2905588006413621,
+   0.9634413985119739
+  ],
+  [
+   0.28551366168160547,
+   0.9628236307521647
+  ],
+  [
+   0.2777879045276733,
+   0.9640644397424769
+  ],
+  [
+   0.2764875178396396,
+   0.9652184745193582
+  ],
+  [
+   0.27137030141346224,
+   0.9648045513970551
+  ]
+ ],
+ "CNN-multi-v2/A_unseen_weather": {
+  "ap": {
+   "is_vessel": 0.9917007998298895,
+   "is_dolphin": 0.9888012211313247,
+   "is_whale": 0.987116037315193,
+   "is_fish": 0.965501720626385,
+   "is_airgun": 0.9445624024652827,
+   "storm": 0.9768623820761702,
+   "fault_any": 1.0
+  },
+  "f1": {
+   "is_vessel": 0.9302325581395349,
+   "is_dolphin": 0.9403606102635229,
+   "is_whale": 0.9529085872576177,
+   "is_fish": 0.8904795991410165,
+   "is_airgun": 0.8539325842696629,
+   "storm": 0.8969072164948454,
+   "fault_any": 1.0
+  },
+  "n_pos": {
+   "is_vessel": 586,
+   "is_dolphin": 354,
+   "is_whale": 187,
+   "is_fish": 728,
+   "is_airgun": 51,
+   "storm": 784,
+   "fault_any": 78
+  },
+  "mAP": 0.9792206519206064,
+  "macroF1": 0.9235458793666,
+  "fault_recall@1%FPR": {
+   "hum": 1.0,
+   "pops": 1.0,
+   "dropout": 1.0,
+   "stuck_sensor": NaN
+  },
+  "vessel_type_acc": 0.7610921501706485,
+  "vessel_type_macroF1": 0.8271575998067671,
+  "vessel_family_acc": 0.9778156996587031,
+  "cargo_vs_tanker_acc": 0.7114967462039046,
+  "cargo_vs_tanker_auc": 0.7982816444963635,
+  "vessel_type_acc_snr>=20dB": 0.8076923076923077
+ },
+ "CNN-multi-v2/A_unseen_season": {
+  "ap": {
+   "is_vessel": 0.9949496307398125,
+   "is_dolphin": 0.9934833574381982,
+   "is_whale": NaN,
+   "is_fish": 0.9847876227662223,
+   "is_airgun": 0.962794599546219,
+   "storm": 0.97117401970529,
+   "fault_any": 1.0
+  },
+  "f1": {
+   "is_vessel": 0.9364705882352942,
+   "is_dolphin": 0.9532163742690059,
+   "is_whale": NaN,
+   "is_fish": 0.9321685508735869,
+   "is_airgun": 0.8571428571428571,
+   "storm": 0.9048239895697523,
+   "fault_any": 1.0
+  },
+  "n_pos": {
+   "is_vessel": 671,
+   "is_dolphin": 168,
+   "is_whale": 0,
+   "is_fish": 989,
+   "is_airgun": 32,
+   "storm": 751,
+   "fault_any": 73
+  },
+  "mAP": 0.9845315383659571,
+  "macroF1": 0.9306370600150827,
+  "fault_recall@1%FPR": {
+   "hum": 1.0,
+   "pops": 1.0,
+   "dropout": 1.0,
+   "stuck_sensor": NaN
+  },
+  "vessel_type_acc": 0.7377049180327869,
+  "vessel_type_macroF1": 0.7715975497494263,
+  "vessel_family_acc": 0.9582712369597616,
+  "cargo_vs_tanker_acc": 0.7286689419795221,
+  "cargo_vs_tanker_auc": 0.8207623106060606,
+  "vessel_type_acc_snr>=20dB": 0.8125
+ },
+ "CNN-multi-v2/B_season1": {
+  "ap": {
+   "is_vessel": 0.9525628180048579,
+   "is_dolphin": 0.9772903262682523,
+   "is_whale": 0.9866769845012366,
+   "is_fish": 0.9697022690956667,
+   "is_airgun": NaN,
+   "storm": 0.9600167513183538,
+   "fault_any": 1.0
+  },
+  "f1": {
+   "is_vessel": 0.6259541984732825,
+   "is_dolphin": 0.9135135135135135,
+   "is_whale": 0.9394812680115274,
+   "is_fish": 0.8365122615803815,
+   "is_airgun": NaN,
+   "storm": 0.8637931034482759,
+   "fault_any": 1.0
+  },
+  "n_pos": {
+   "is_vessel": 180,
+   "is_dolphin": 175,
+   "is_whale": 182,
+   "is_fish": 422,
+   "is_airgun": 0,
+   "storm": 550,
+   "fault_any": 6
+  },
+  "mAP": 0.9743748581980611,
+  "macroF1": 0.8632090575044967,
+  "fault_recall@1%FPR": {
+   "hum": NaN,
+   "pops": 1.0,
+   "dropout": NaN,
+   "stuck_sensor": NaN
+  },
+  "vessel_type_acc": 0.85,
+  "vessel_type_macroF1": 0.8868185963515418,
+  "vessel_family_acc": 0.9833333333333333,
+  "cargo_vs_tanker_acc": 0.8333333333333334,
+  "cargo_vs_tanker_auc": 0.9563002155594749,
+  "vessel_type_acc_snr>=20dB": 0.9166666666666666
+ },
+ "CNN-multi-v2+AdaBN/B_season1": {
+  "ap": {
+   "is_vessel": 0.9874870546338204,
+   "is_dolphin": 0.9825367419200511,
+   "is_whale": 0.9872638069033948,
+   "is_fish": 0.9777644039645127,
+   "is_airgun": NaN,
+   "storm": 0.5917481725090082,
+   "fault_any": 1.0
+  },
+  "f1": {
+   "is_vessel": 0.8819875776397516,
+   "is_dolphin": 0.9134328358208955,
+   "is_whale": 0.757679180887372,
+   "is_fish": 0.9228915662650602,
+   "is_airgun": NaN,
+   "storm": 0.602017937219731,
+   "fault_any": 1.0
+  },
+  "n_pos": {
+   "is_vessel": 180,
+   "is_dolphin": 175,
+   "is_whale": 182,
+   "is_fish": 422,
+   "is_airgun": 0,
+   "storm": 550,
+   "fault_any": 6
+  },
+  "mAP": 0.9211333633217978,
+  "macroF1": 0.8463348496388017,
+  "fault_recall@1%FPR": {
+   "hum": NaN,
+   "pops": 1.0,
+   "dropout": NaN,
+   "stuck_sensor": NaN
+  },
+  "vessel_type_acc": 0.8444444444444444,
+  "vessel_type_macroF1": 0.8853287015712165,
+  "vessel_family_acc": 0.9833333333333333,
+  "cargo_vs_tanker_acc": 0.8263888888888888,
+  "cargo_vs_tanker_auc": 0.9427787575935724,
+  "vessel_type_acc_snr>=20dB": 0.9444444444444444
+ },
+ "CNN-multi-v2/B_season2": {
+  "ap": {
+   "is_vessel": 0.9688453511707192,
+   "is_dolphin": 0.9924878545434531,
+   "is_whale": 0.9681753978109546,
+   "is_fish": 0.9784023242886508,
+   "is_airgun": NaN,
+   "storm": 0.7351998982160686,
+   "fault_any": 1.0
+  },
+  "f1": {
+   "is_vessel": 0.4824561403508772,
+   "is_dolphin": 0.932475884244373,
+   "is_whale": 0.8055555555555556,
+   "is_fish": 0.8590604026845637,
+   "is_airgun": NaN,
+   "storm": 0.5882352941176471,
+   "fault_any": 1.0
+  },
+  "n_pos": {
+   "is_vessel": 173,
+   "is_dolphin": 146,
+   "is_whale": 42,
+   "is_fish": 590,
+   "is_airgun": 0,
+   "storm": 31,
+   "fault_any": 15
+  },
+  "mAP": 0.9405184710049744,
+  "macroF1": 0.7779638794921695,
+  "fault_recall@1%FPR": {
+   "hum": 1.0,
+   "pops": NaN,
+   "dropout": NaN,
+   "stuck_sensor": NaN
+  },
+  "vessel_type_acc": 0.7456647398843931,
+  "vessel_type_macroF1": 0.7895994256288374,
+  "vessel_family_acc": 0.9710982658959537,
+  "cargo_vs_tanker_acc": 0.7028985507246377,
+  "cargo_vs_tanker_auc": 0.9213432499436556,
+  "vessel_type_acc_snr>=20dB": 0.88
+ },
+ "CNN-multi-v2+AdaBN/B_season2": {
+  "ap": {
+   "is_vessel": 0.9600491679322662,
+   "is_dolphin": 0.9877028626686288,
+   "is_whale": 0.9586818038832059,
+   "is_fish": 0.9806366206219537,
+   "is_airgun": NaN,
+   "storm": 0.762235736415442,
+   "fault_any": 1.0
+  },
+  "f1": {
+   "is_vessel": 0.7089552238805971,
+   "is_dolphin": 0.9435215946843853,
+   "is_whale": 0.9090909090909091,
+   "is_fish": 0.8900845503458877,
+   "is_airgun": NaN,
+   "storm": 0.41025641025641024,
+   "fault_any": 0.8571428571428571
+  },
+  "n_pos": {
+   "is_vessel": 173,
+   "is_dolphin": 146,
+   "is_whale": 42,
+   "is_fish": 590,
+   "is_airgun": 0,
+   "storm": 31,
+   "fault_any": 15
+  },
+  "mAP": 0.9415510319202495,
+  "macroF1": 0.7865085909001744,
+  "fault_recall@1%FPR": {
+   "hum": 1.0,
+   "pops": NaN,
+   "dropout": NaN,
+   "stuck_sensor": NaN
+  },
+  "vessel_type_acc": 0.7398843930635838,
+  "vessel_type_macroF1": 0.8165898111550285,
+  "vessel_family_acc": 0.9710982658959537,
+  "cargo_vs_tanker_acc": 0.6956521739130435,
+  "cargo_vs_tanker_auc": 0.9168356997971603,
+  "vessel_type_acc_snr>=20dB": 0.88
+ },
+ "CNN-multi-v2/E_season1": {
+  "ap": {
+   "is_vessel": 0.9832651103339232,
+   "is_dolphin": 0.9960388209995795,
+   "is_whale": 0.9930276049048091,
+   "is_fish": NaN,
+   "is_airgun": 0.9885257088495529,
+   "storm": 0.9436320858163599,
+   "fault_any": 1.0
+  },
+  "f1": {
+   "is_vessel": 0.6935483870967742,
+   "is_dolphin": 0.9691629955947136,
+   "is_whale": 0.9372384937238494,
+   "is_fish": NaN,
+   "is_airgun": 0.9473684210526315,
+   "storm": 0.8436018957345972,
+   "fault_any": 1.0
+  },
+  "n_pos": {
+   "is_vessel": 81,
+   "is_dolphin": 112,
+   "is_whale": 247,
+   "is_fish": 0,
+   "is_airgun": 29,
+   "storm": 305,
+   "fault_any": 61
+  },
+  "mAP": 0.9840815551507042,
+  "macroF1": 0.8984866988670944,
+  "fault_recall@1%FPR": {
+   "hum": 1.0,
+   "pops": 1.0,
+   "dropout": 1.0,
+   "stuck_sensor": 1.0
+  },
+  "vessel_type_acc": 0.9629629629629629,
+  "vessel_type_macroF1": 0.9754152823920266,
+  "vessel_family_acc": 1.0,
+  "cargo_vs_tanker_acc": 0.9594594594594594,
+  "cargo_vs_tanker_auc": 0.9816433566433567,
+  "vessel_type_acc_snr>=20dB": 1.0
+ },
+ "CNN-multi-v2+AdaBN/E_season1": {
+  "ap": {
+   "is_vessel": 0.9957148540017478,
+   "is_dolphin": 0.9905246107526198,
+   "is_whale": 0.9849554217843732,
+   "is_fish": NaN,
+   "is_airgun": 0.8391385057067415,
+   "storm": 0.2379776663460741,
+   "fault_any": 0.9989507525202924
+  },
+  "f1": {
+   "is_vessel": 0.9473684210526315,
+   "is_dolphin": 0.963963963963964,
+   "is_whale": 0.9251439539347409,
+   "is_fish": NaN,
+   "is_airgun": 0.5384615384615384,
+   "storm": 0.4689655172413793,
+   "fault_any": 0.8652482269503546
+  },
+  "n_pos": {
+   "is_vessel": 81,
+   "is_dolphin": 112,
+   "is_whale": 247,
+   "is_fish": 0,
+   "is_airgun": 29,
+   "storm": 305,
+   "fault_any": 61
+  },
+  "mAP": 0.8412103018519748,
+  "macroF1": 0.7848586036007682,
+  "fault_recall@1%FPR": {
+   "hum": 1.0,
+   "pops": 1.0,
+   "dropout": 1.0,
+   "stuck_sensor": 1.0
+  },
+  "vessel_type_acc": 0.9259259259259259,
+  "vessel_type_macroF1": 0.951486013986014,
+  "vessel_family_acc": 1.0,
+  "cargo_vs_tanker_acc": 0.918918918918919,
+  "cargo_vs_tanker_auc": 0.9781468531468531,
+  "vessel_type_acc_snr>=20dB": 0.875
+ },
+ "CNN-multi-v2/E_season2": {
+  "ap": {
+   "is_vessel": 0.9696063547597926,
+   "is_dolphin": 0.9968835434053598,
+   "is_whale": NaN,
+   "is_fish": NaN,
+   "is_airgun": NaN,
+   "storm": NaN,
+   "fault_any": 1.0
+  },
+  "f1": {
+   "is_vessel": 0.5666666666666667,
+   "is_dolphin": 0.9811320754716981,
+   "is_whale": NaN,
+   "is_fish": NaN,
+   "is_airgun": NaN,
+   "storm": NaN,
+   "fault_any": 1.0
+  },
+  "n_pos": {
+   "is_vessel": 43,
+   "is_dolphin": 133,
+   "is_whale": 0,
+   "is_fish": 0,
+   "is_airgun": 0,
+   "storm": 0,
+   "fault_any": 70
+  },
+  "mAP": 0.9888299660550507,
+  "macroF1": 0.8492662473794549,
+  "fault_recall@1%FPR": {
+   "hum": 1.0,
+   "pops": 1.0,
+   "dropout": NaN,
+   "stuck_sensor": 1.0
+  },
+  "vessel_type_acc": 0.9069767441860465,
+  "vessel_type_macroF1": 0.9320175438596492,
+  "vessel_family_acc": 1.0,
+  "cargo_vs_tanker_acc": 0.8709677419354839,
+  "cargo_vs_tanker_auc": 1.0
+ },
+ "CNN-multi-v2+AdaBN/E_season2": {
+  "ap": {
+   "is_vessel": 0.9660837520837595,
+   "is_dolphin": 0.9864512391407683,
+   "is_whale": NaN,
+   "is_fish": NaN,
+   "is_airgun": NaN,
+   "storm": NaN,
+   "fault_any": 0.999412915851272
+  },
+  "f1": {
+   "is_vessel": 0.8631578947368421,
+   "is_dolphin": 0.9657794676806084,
+   "is_whale": NaN,
+   "is_fish": NaN,
+   "is_airgun": NaN,
+   "storm": NaN,
+   "fault_any": 0.9210526315789473
+  },
+  "n_pos": {
+   "is_vessel": 43,
+   "is_dolphin": 133,
+   "is_whale": 0,
+   "is_fish": 0,
+   "is_airgun": 0,
+   "storm": 0,
+   "fault_any": 70
+  },
+  "mAP": 0.9839826356919333,
+  "macroF1": 0.9166633313321326,
+  "fault_recall@1%FPR": {
+   "hum": 1.0,
+   "pops": 1.0,
+   "dropout": NaN,
+   "stuck_sensor": 1.0
+  },
+  "vessel_type_acc": 0.9302325581395349,
+  "vessel_type_macroF1": 0.9497297297297298,
+  "vessel_family_acc": 1.0,
+  "cargo_vs_tanker_acc": 0.9032258064516129,
+  "cargo_vs_tanker_auc": 0.9915966386554622
+ },
+ "calibration": {
+  "temperature": [
+   1.1977914571762085,
+   0.8609495162963867,
+   1.117393136024475,
+   1.0061739683151245,
+   1.069035530090332,
+   0.8096238374710083,
+   0.7815309166908264
+  ],
+  "ece_raw": {
+   "A_unseen_weather": {
+    "is_vessel": 0.004151619830183873,
+    "is_dolphin": 0.007461491318665343,
+    "is_whale": 0.004251292566402332,
+    "is_fish": 0.02710932170577709,
+    "is_airgun": 0.00431303908941724,
+    "storm": 0.04104803185457261,
+    "fault_any": 0.0008439938804292102
+   },
+   "A_unseen_season": {
+    "is_vessel": 0.0032230873556626572,
+    "is_dolphin": 0.005127895599407905,
+    "is_whale": 0.0012079489997294905,
+    "is_fish": 0.03970346719595706,
+    "is_airgun": 0.0027991283581488666,
+    "storm": 0.04447875884167539,
+    "fault_any": 0.0009305039990404448
+   },
+   "B_season1": {
+    "is_vessel": 0.02721839309670031,
+    "is_dolphin": 0.020827521374564114,
+    "is_whale": 0.008474827880926582,
+    "is_fish": 0.007696308082193824,
+    "is_airgun": 0.0008860331727191806,
+    "storm": 0.09121136116553787,
+    "fault_any": 0.0006422147560105831
+   },
+   "B_season2": {
+    "is_vessel": 0.03067235015267126,
+    "is_dolphin": 0.02554920014384904,
+    "is_whale": 0.0013580198554943009,
+    "is_fish": 0.009153026723544356,
+    "is_airgun": 0.0006074904231354594,
+    "storm": 0.08108242313596017,
+    "fault_any": 0.0005290173964264492
+   },
+   "E_season1": {
+    "is_vessel": 0.009177060038793436,
+    "is_dolphin": 0.007058171314808228,
+    "is_whale": 0.012073704836290774,
+    "is_fish": 0.0010694147990211662,
+    "is_airgun": 0.001363967420884701,
+    "storm": 0.05526458169966016,
+    "fault_any": 0.0005430014369873485
+   },
+   "E_season2": {
+    "is_vessel": 0.006581036228615429,
+    "is_dolphin": 0.006422962089943019,
+    "is_whale": 0.0008889537012882899,
+    "is_fish": 0.0011500480958479054,
+    "is_airgun": 0.0010941631626337767,
+    "storm": 0.023480246908226865,
+    "fault_any": 0.0007631754210537851
+   }
+  },
+  "ece_scaled": {
+   "A_unseen_weather": {
+    "is_vessel": 0.0040458491947012445,
+    "is_dolphin": 0.007202553532178146,
+    "is_whale": 0.005155660412720889,
+    "is_fish": 0.02721075994106931,
+    "is_airgun": 0.00534490135646128,
+    "storm": 0.03552057353984628,
+    "fault_any": 0.00019123668850063623
+   },
+   "A_unseen_season": {
+    "is_vessel": 0.004249090971606035,
+    "is_dolphin": 0.00417267530203631,
+    "is_whale": 0.0020156556104720088,
+    "is_fish": 0.03977960736534445,
+    "is_airgun": 0.0037660704205031933,
+    "storm": 0.03915463030669065,
+    "fault_any": 0.00022198837013080714
+   },
+   "B_season1": {
+    "is_vessel": 0.026855536685318773,
+    "is_dolphin": 0.015548146058423695,
+    "is_whale": 0.009354700650852149,
+    "is_fish": 0.007586586204415749,
+    "is_airgun": 0.0013435668463565764,
+    "storm": 0.07885422819153064,
+    "fault_any": 0.00011461038798543958
+   },
+   "B_season2": {
+    "is_vessel": 0.03053092235279552,
+    "is_dolphin": 0.018490897791707386,
+    "is_whale": 0.002124734107765248,
+    "is_fish": 0.00956307359616983,
+    "is_airgun": 0.0009586126371417318,
+    "storm": 0.062260535018573156,
+    "fault_any": 8.702474355658406e-05
+   },
+   "E_season1": {
+    "is_vessel": 0.008999156692328031,
+    "is_dolphin": 0.00418921965337944,
+    "is_whale": 0.012977044050330214,
+    "is_fish": 0.0011043344889720313,
+    "is_airgun": 0.0018610540108048932,
+    "storm": 0.0475359399689803,
+    "fault_any": 0.00011422657407344183
+   },
+   "E_season2": {
+    "is_vessel": 0.006257675783782582,
+    "is_dolphin": 0.0029946225096670557,
+    "is_whale": 0.0016693662144989625,
+    "is_fish": 0.0011884960936569859,
+    "is_airgun": 0.0016498363951421694,
+    "storm": 0.013747015179551124,
+    "fault_any": 0.0001802393873150151
+   }
+  }
+ },
+ "adaptation": {
+  "B": {
+   "curve": {
+    "sizes": [
+     0,
+     54,
+     108,
+     216,
+     432,
+     648
+    ],
+    "season1": {
+     "0": {
+      "mAP_mean": 0.9743748581980611,
+      "mAP_std": 0.0,
+      "per_label_ap": {
+       "is_vessel": 0.9525628180048579,
+       "is_dolphin": 0.9772903262682523,
+       "is_whale": 0.9866769845012366,
+       "is_fish": 0.9697022690956667,
+       "is_airgun": NaN,
+       "storm": 0.9600167513183538,
+       "fault_any": 1.0
+      },
+      "vessel_type_acc": 0.85
+     },
+     "54": {
+      "mAP_mean": 0.974618970945525,
+      "mAP_std": 0.000169904527116113,
+      "per_label_ap": {
+       "is_vessel": 0.963816007094659,
+       "is_dolphin": 0.9723406276894758,
+       "is_whale": 0.9873993731104148,
+       "is_fish": 0.9693641829082806,
+       "is_airgun": NaN,
+       "storm": 0.9547936348703198,
+       "fault_any": 1.0
+      },
+      "vessel_type_acc": 0.8537037037037036
+     },
+     "108": {
+      "mAP_mean": 0.9748859681138867,
+      "mAP_std": 0.0001901333709354489,
+      "per_label_ap": {
+       "is_vessel": 0.9706084963941946,
+       "is_dolphin": 0.969880229884207,
+       "is_whale": 0.9887168097438636,
+       "is_fish": 0.9710319971261733,
+       "is_airgun": NaN,
+       "storm": 0.9490782755348821,
+       "fault_any": 1.0
+      },
+      "vessel_type_acc": 0.85
+     },
+     "216": {
+      "mAP_mean": 0.972603461191535,
+      "mAP_std": 0.0008335685384850973,
+      "per_label_ap": {
+       "is_vessel": 0.9692840844572229,
+       "is_dolphin": 0.9637428058143106,
+       "is_whale": 0.9903454316857095,
+       "is_fish": 0.9773861973271933,
+       "is_airgun": NaN,
+       "storm": 0.9348622478647726,
+       "fault_any": 1.0
+      },
+      "vessel_type_acc": 0.85
+     },
+     "432": {
+      "mAP_mean": 0.9721449078722761,
+      "mAP_std": 0.00019962853878369987,
+      "per_label_ap": {
+       "is_vessel": 0.9820837953908935,
+       "is_dolphin": 0.9674500473851187,
+       "is_whale": 0.9894932278681053,
+       "is_fish": 0.9770022182530543,
+       "is_airgun": NaN,
+       "storm": 0.916840158336485,
+       "fault_any": 1.0
+      },
+      "vessel_type_acc": 0.85
+     },
+     "648": {
+      "mAP_mean": 0.9751748109088433,
+      "mAP_std": 0.0031471848916471822,
+      "per_label_ap": {
+       "is_vessel": 0.9771760536923444,
+       "is_dolphin": 0.986975014885957,
+       "is_whale": 0.9863273197744008,
+       "is_fish": 0.9727920850727864,
+       "is_airgun": NaN,
+       "storm": 0.9277783920275716,
+       "fault_any": 1.0
+      },
+      "vessel_type_acc": 0.8537037037037037
+     }
+    },
+    "season2": {
+     "0": {
+      "mAP_mean": 0.9405184710049744,
+      "mAP_std": 0.0,
+      "per_label_ap": {
+       "is_vessel": 0.9688453511707192,
+       "is_dolphin": 0.9924878545434531,
+       "is_whale": 0.9681753978109546,
+       "is_fish": 0.9784023242886508,
+       "is_airgun": NaN,
+       "storm": 0.7351998982160686,
+       "fault_any": 1.0
+      },
+      "vessel_type_acc": 0.7456647398843931
+     },
+     "54": {
+      "mAP_mean": 0.9435729154124877,
+      "mAP_std": 0.00010447055862551269,
+      "per_label_ap": {
+       "is_vessel": 0.9707390647331461,
+       "is_dolphin": 0.9910766967099366,
+       "is_whale": 0.9665662687601836,
+       "is_fish": 0.9789237472061902,
+       "is_airgun": NaN,
+       "storm": 0.7541317150654692,
+       "fault_any": 1.0
+      },
+      "vessel_type_acc": 0.7456647398843931
+     },
+     "108": {
+      "mAP_mean": 0.9432582189225919,
+      "mAP_std": 0.00015096787666198008,
+      "per_label_ap": {
+       "is_vessel": 0.9722067390390631,
+       "is_dolphin": 0.9899164227002629,
+       "is_whale": 0.968673698035567,
+       "is_fish": 0.9794937842695225,
+       "is_airgun": NaN,
+       "storm": 0.749258669491136,
+       "fault_any": 1.0
+      },
+      "vessel_type_acc": 0.7514450867052024
+     },
+     "216": {
+      "mAP_mean": 0.9349057660263154,
+      "mAP_std": 0.0014417534541828101,
+      "per_label_ap": {
+       "is_vessel": 0.9630400879309969,
+       "is_dolphin": 0.9877495035841667,
+       "is_whale": 0.9677933879514278,
+       "is_fish": 0.9795898845184986,
+       "is_airgun": NaN,
+       "storm": 0.7112617321728019,
+       "fault_any": 1.0
+      },
+      "vessel_type_acc": 0.7514450867052022
+     },
+     "432": {
+      "mAP_mean": 0.9206543363216171,
+      "mAP_std": 0.0005017058718789083,
+      "per_label_ap": {
+       "is_vessel": 0.967594002043613,
+       "is_dolphin": 0.9877878095475466,
+       "is_whale": 0.9619890311123115,
+       "is_fish": 0.979372139881766,
+       "is_airgun": NaN,
+       "storm": 0.6271830353444656,
+       "fault_any": 1.0
+      },
+      "vessel_type_acc": 0.7572254335260116
+     },
+     "648": {
+      "mAP_mean": 0.939624039297135,
+      "mAP_std": 0.01642281004811418,
+      "per_label_ap": {
+       "is_vessel": 0.9776653686840397,
+       "is_dolphin": 0.9894796247757663,
+       "is_whale": 0.9589501499229277,
+       "is_fish": 0.981863888424178,
+       "is_airgun": NaN,
+       "storm": 0.7297852039758981,
+       "fault_any": 1.0
+      },
+      "vessel_type_acc": 0.7495183044315992
+     }
+    }
+   },
+   "two_season_648": {
+    "B_season1": {
+     "mAP_mean": 0.9782606423107186,
+     "mAP_std": 0.00020726061876590786
+    },
+    "B_season2": {
+     "mAP_mean": 0.9432029520242596,
+     "mAP_std": 0.00016068497504135212
+    }
+   },
+   "scratch_648_season1_only": {
+    "B_season1": {
+     "mAP_mean": 0.7477080911177695,
+     "mAP_std": 0.014866834902248709
+    },
+    "B_season2": {
+     "mAP_mean": 0.8695060699038253,
+     "mAP_std": 0.012848402288242348
+    }
+   },
+   "gb_multi+648": {
+    "B_season1": 0.9346207611333609,
+    "B_season2": 0.8126997696512973
+   }
+  },
+  "E": {
+   "curve": {
+    "sizes": [
+     0,
+     54,
+     108,
+     216,
+     432,
+     648
+    ],
+    "season1": {
+     "0": {
+      "mAP_mean": 0.9840815551507042,
+      "mAP_std": 0.0,
+      "per_label_ap": {
+       "is_vessel": 0.9832651103339232,
+       "is_dolphin": 0.9960388209995795,
+       "is_whale": 0.9930276049048091,
+       "is_fish": NaN,
+       "is_airgun": 0.9885257088495529,
+       "storm": 0.9436320858163599,
+       "fault_any": 1.0
+      },
+      "vessel_type_acc": 0.9629629629629629
+     },
+     "54": {
+      "mAP_mean": 0.9795482234044618,
+      "mAP_std": 0.0010283008095091594,
+      "per_label_ap": {
+       "is_vessel": 0.9855674399970784,
+       "is_dolphin": 0.9966731316389303,
+       "is_whale": 0.9921322613735747,
+       "is_fish": NaN,
+       "is_airgun": 0.9872632885180602,
+       "storm": 0.9156532188991267,
+       "fault_any": 1.0
+      },
+      "vessel_type_acc": 0.8847736625514403
+     },
+     "108": {
+      "mAP_mean": 0.9776125436282568,
+      "mAP_std": 0.0012712962957073535,
+      "per_label_ap": {
+       "is_vessel": 0.9934230324666699,
+       "is_dolphin": 0.9957214625861835,
+       "is_whale": 0.9911011842302098,
+       "is_fish": NaN,
+       "is_airgun": 0.9804995374930989,
+       "storm": 0.9049300449933781,
+       "fault_any": 1.0
+      },
+      "vessel_type_acc": 0.8477366255144032
+     },
+     "216": {
+      "mAP_mean": 0.9795246875472284,
+      "mAP_std": 0.0002558697071605282,
+      "per_label_ap": {
+       "is_vessel": 0.9911827827289432,
+       "is_dolphin": 0.9957175538164228,
+       "is_whale": 0.992588318479131,
+       "is_fish": NaN,
+       "is_airgun": 0.9904991962591456,
+       "storm": 0.9071602739997272,
+       "fault_any": 1.0
+      },
+      "vessel_type_acc": 0.9547325102880659
+     },
+     "432": {
+      "mAP_mean": 0.9753683886290063,
+      "mAP_std": 0.0005505040558051241,
+      "per_label_ap": {
+       "is_vessel": 0.9934258955998786,
+       "is_dolphin": 0.9960148660813927,
+       "is_whale": 0.9928631249213967,
+       "is_fish": NaN,
+       "is_airgun": 0.990202107726763,
+       "storm": 0.8797043374446064,
+       "fault_any": 1.0
+      },
+      "vessel_type_acc": 0.9300411522633745
+     },
+     "648": {
+      "mAP_mean": 0.9456173046514453,
+      "mAP_std": 0.0025125194124725643,
+      "per_label_ap": {
+       "is_vessel": 0.9956604570447606,
+       "is_dolphin": 0.9951786275418399,
+       "is_whale": 0.9926768129170905,
+       "is_fish": NaN,
+       "is_airgun": 0.991248255628895,
+       "storm": 0.6989396747760859,
+       "fault_any": 1.0
+      },
+      "vessel_type_acc": 0.934156378600823
+     }
+    },
+    "season2": {
+     "0": {
+      "mAP_mean": 0.9888299660550507,
+      "mAP_std": 0.0,
+      "per_label_ap": {
+       "is_vessel": 0.9696063547597926,
+       "is_dolphin": 0.9968835434053598,
+       "is_whale": NaN,
+       "is_fish": NaN,
+       "is_airgun": NaN,
+       "storm": NaN,
+       "fault_any": 1.0
+      },
+      "vessel_type_acc": 0.9069767441860465
+     },
+     "54": {
+      "mAP_mean": 0.9875496113109298,
+      "mAP_std": 0.0010211409447284446,
+      "per_label_ap": {
+       "is_vessel": 0.9666979289321945,
+       "is_dolphin": 0.9959509050005945,
+       "is_whale": NaN,
+       "is_fish": NaN,
+       "is_airgun": NaN,
+       "storm": NaN,
+       "fault_any": 1.0
+      },
+      "vessel_type_acc": 0.9069767441860465
+     },
+     "108": {
+      "mAP_mean": 0.9888114549168253,
+      "mAP_std": 0.0007437253699854729,
+      "per_label_ap": {
+       "is_vessel": 0.9714468745073357,
+       "is_dolphin": 0.995054559324294,
+       "is_whale": NaN,
+       "is_fish": NaN,
+       "is_airgun": NaN,
+       "storm": NaN,
+       "fault_any": 0.9999329309188464
+      },
+      "vessel_type_acc": 0.937984496124031
+     },
+     "216": {
+      "mAP_mean": 0.9909588595159482,
+      "mAP_std": 0.0007895059271891433,
+      "per_label_ap": {
+       "is_vessel": 0.9773400605132198,
+       "is_dolphin": 0.9955365180346245,
+       "is_whale": NaN,
+       "is_fish": NaN,
+       "is_airgun": NaN,
+       "storm": NaN,
+       "fault_any": 1.0
+      },
+      "vessel_type_acc": 0.9069767441860465
+     },
+     "432": {
+      "mAP_mean": 0.9901531769959228,
+      "mAP_std": 0.0008816577608323,
+      "per_label_ap": {
+       "is_vessel": 0.9761294020078496,
+       "is_dolphin": 0.9943301289799192,
+       "is_whale": NaN,
+       "is_fish": NaN,
+       "is_airgun": NaN,
+       "storm": NaN,
+       "fault_any": 1.0
+      },
+      "vessel_type_acc": 0.9147286821705426
+     },
+     "648": {
+      "mAP_mean": 0.9897930395412327,
+      "mAP_std": 5.465579606022204e-05,
+      "per_label_ap": {
+       "is_vessel": 0.976337259300307,
+       "is_dolphin": 0.993041859323391,
+       "is_whale": NaN,
+       "is_fish": NaN,
+       "is_airgun": NaN,
+       "storm": NaN,
+       "fault_any": 1.0
+      },
+      "vessel_type_acc": 0.9147286821705426
+     }
+    }
+   },
+   "two_season_648": {
+    "E_season1": {
+     "mAP_mean": 0.9504402377330515,
+     "mAP_std": 0.005552508806813384
+    },
+    "E_season2": {
+     "mAP_mean": 0.9893132260848461,
+     "mAP_std": 0.00036463948629083875
+    }
+   },
+   "scratch_648_season1_only": {
+    "E_season1": {
+     "mAP_mean": 0.481013396717698,
+     "mAP_std": 0.0601824425388955
+    },
+    "E_season2": {
+     "mAP_mean": 0.3770111107416727,
+     "mAP_std": 0.020704526563787806
+    }
+   },
+   "gb_multi+648": {
+    "E_season1": 0.8210562433842955,
+    "E_season2": 0.9912951595032808
+   }
+  }
+ }
+}

@@ -1,0 +1,114 @@
+{
+ "global_gain_db": -4.7692108154296875,
+ "files": {
+  "22__19_07_13_adventure_maniobra.wav": {
+   "description": "passenger / ro-ro vessel manoeuvring",
+   "n_windows": 10,
+   "mean_prob": {
+    "is_vessel": 0.9788087606430054,
+    "is_dolphin": 0.04467952251434326,
+    "is_whale": 0.2859416604042053,
+    "is_fish": 0.997983455657959,
+    "is_airgun": 0.0038448027335107327,
+    "storm": 0.010263785719871521,
+    "fault_any": 0.006387294270098209
+   },
+   "vessel_detected_fraction(p>0.5)": 1.0,
+   "median_comb_f0_hz": 21.26144812827561,
+   "median_comb_strength": 0.1589252424179144,
+   "vessel_type_probs_on_detected": {
+    "cargo": 0.3280491530895233,
+    "tanker": 0.2350146323442459,
+    "ferry": 0.09648781269788742,
+    "fishing": 0.059490859508514404,
+    "outboard": 0.28095752000808716
+   }
+  },
+  "6__10_07_13_marDeCangas_Entra.wav": {
+   "description": "passenger ferry arriving",
+   "n_windows": 60,
+   "mean_prob": {
+    "is_vessel": 0.2842293083667755,
+    "is_dolphin": 0.1382974237203598,
+    "is_whale": 0.15053169429302216,
+    "is_fish": 0.3033636510372162,
+    "is_airgun": 0.008394821546971798,
+    "storm": 0.6707645654678345,
+    "fault_any": 0.02993130125105381
+   },
+   "vessel_detected_fraction(p>0.5)": 0.31666666666666665,
+   "median_comb_f0_hz": 4.845103967040895,
+   "median_comb_strength": 0.1406041377508545,
+   "vessel_type_probs_on_detected": {
+    "cargo": 0.08383352309465408,
+    "tanker": 0.10070617496967316,
+    "ferry": 0.5638106465339661,
+    "fishing": 0.05048209801316261,
+    "outboard": 0.20116755366325378
+   }
+  },
+  "79__23_07_13_H3_zodiac.wav": {
+   "description": "small motorboat (zodiac)",
+   "n_windows": 19,
+   "mean_prob": {
+    "is_vessel": 0.8018730282783508,
+    "is_dolphin": 0.8524470329284668,
+    "is_whale": 0.414992094039917,
+    "is_fish": 0.9748163819313049,
+    "is_airgun": 0.003800848266109824,
+    "storm": 0.5458999276161194,
+    "fault_any": 0.010595527477562428
+   },
+   "vessel_detected_fraction(p>0.5)": 0.8947368421052632,
+   "median_comb_f0_hz": 33.24299551282266,
+   "median_comb_strength": 0.1563868204250314,
+   "vessel_type_probs_on_detected": {
+    "cargo": 0.09723585844039917,
+    "tanker": 0.06830663233995438,
+    "ferry": 0.11895576864480972,
+    "fishing": 0.08310610055923462,
+    "outboard": 0.6323955655097961
+   }
+  },
+  "82__27_09_13_H3_lluvia.wav": {
+   "description": "rain, no vessel (ambient)",
+   "n_windows": 24,
+   "mean_prob": {
+    "is_vessel": 3.752377233467996e-05,
+    "is_dolphin": 0.08119367808103561,
+    "is_whale": 0.006962672341614962,
+    "is_fish": 0.002784452401101589,
+    "is_airgun": 0.00030961973243393004,
+    "storm": 0.9915712475776672,
+    "fault_any": 0.00037784394226036966
+   },
+   "vessel_detected_fraction(p>0.5)": 0.0,
+   "median_comb_f0_hz": 27.205308119069002,
+   "median_comb_strength": 0.07702268692660613,
+   "vessel_type_probs_on_detected": {
+    "cargo": null,
+    "tanker": null,
+    "ferry": null,
+    "fishing": null,
+    "outboard": null
+   }
+  }
+ },
+ "mel_percentiles_db": {
+  "real_aligned": [
+   -49.13218688964844,
+   -19.471601486206055,
+   -1.4584474563598633
+  ],
+  "sim_calm": [
+   -34.03125,
+   -26.15625,
+   -17.234375
+  ],
+  "sim_vessel": [
+   -32.28125,
+   -23.53125,
+   -11.6015625
+  ]
+ }
+}

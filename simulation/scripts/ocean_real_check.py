@@ -99,8 +99,8 @@ def main():
                "vessel_type_probs_on_detected": {c: float(VC[P[:, 0] > 0.5][:, i].mean()) if (P[:, 0] > 0.5).any() else None
                                                  for i, c in enumerate(VESSEL_CLASSES)}}
         out["files"][k] = row
-        print(f"{k:38s} vessel p̄={row['mean_prob']['is_vessel']:.2f} detected {row['vessel_detected_fraction(p>0.5)']:.0%}"
-              f" | storm p̄={row['mean_prob']['storm']:.2f} fault p̄={row['mean_prob']['fault_any']:.2f}"
+        print(f"{k:38s} vessel mean p={row['mean_prob']['is_vessel']:.2f} detected {row['vessel_detected_fraction(p>0.5)']:.0%}"
+              f" | storm mean p={row['mean_prob']['storm']:.2f} fault mean p={row['mean_prob']['fault_any']:.2f}"
               f" | comb f0 {row['median_comb_f0_hz']:.1f} Hz (strength {row['median_comb_strength']:.2f})")
     # spectral-envelope check: real vs simulated mel level percentiles after alignment
     real_all = np.concatenate([m + gain_db for m in mels.values()])

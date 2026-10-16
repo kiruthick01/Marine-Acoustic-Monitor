@@ -1,0 +1,483 @@
+{
+ "full_run_zero_shot": {
+  "Aonly-v1": {
+   "harbor_shelf_s2": {
+    "mAP": 0.9782514200283297,
+    "airgun_ap": 0.9857685009487666,
+    "airgun_n": 51,
+    "fault_ap": 1.0
+   },
+   "harbor_shelf_s3": {
+    "mAP": 0.9642195314513781,
+    "airgun_ap": 0.8947046363312987,
+    "airgun_n": 32,
+    "fault_ap": 1.0000000000000002
+   },
+   "open_coast_s10": {
+    "mAP": 0.9150667953586986,
+    "airgun_ap": 0.7330207674882352,
+    "airgun_n": 20,
+    "fault_ap": 0.9999999999999998
+   },
+   "open_coast_s11": {
+    "mAP": 0.8217575563814161,
+    "airgun_ap": 0.004245993531486302,
+    "airgun_n": 35,
+    "fault_ap": 1.0
+   },
+   "offshore_shelf_s40": {
+    "mAP": 0.8860594997190882,
+    "airgun_ap": 0.9751898062530648,
+    "airgun_n": 29,
+    "fault_ap": 0.5245239183464206
+   },
+   "offshore_shelf_s41": {
+    "mAP": 0.8756384755309817,
+    "airgun_ap": 1.0,
+    "airgun_n": 29,
+    "fault_ap": 0.5900523305912969
+   }
+  },
+  "Aonly-v2": {
+   "harbor_shelf_s2": {
+    "mAP": 0.970074032913638,
+    "airgun_ap": 0.9335496281080181,
+    "airgun_n": 51,
+    "fault_ap": 0.9999999999999999
+   },
+   "harbor_shelf_s3": {
+    "mAP": 0.9658348006570955,
+    "airgun_ap": 0.890297060177156,
+    "airgun_n": 32,
+    "fault_ap": 1.0
+   },
+   "open_coast_s10": {
+    "mAP": 0.9227914237334522,
+    "airgun_ap": 0.7405924582614289,
+    "airgun_n": 20,
+    "fault_ap": 0.9999999999999998
+   },
+   "open_coast_s11": {
+    "mAP": 0.8264824401581592,
+    "airgun_ap": 0.004261905187942915,
+    "airgun_n": 35,
+    "fault_ap": 1.0
+   },
+   "offshore_shelf_s40": {
+    "mAP": 0.9626100203579484,
+    "airgun_ap": 0.9658141646058692,
+    "airgun_n": 29,
+    "fault_ap": 1.0
+   },
+   "offshore_shelf_s41": {
+    "mAP": 0.9702618970522621,
+    "airgun_ap": 1.0,
+    "airgun_n": 29,
+    "fault_ap": 0.9999999999999999
+   }
+  },
+  "multi-v1": {
+   "harbor_shelf_s2": {
+    "mAP": 0.9655149912505656,
+    "airgun_ap": 0.8576358173513872,
+    "airgun_n": 51,
+    "fault_ap": 0.9999999999999998
+   },
+   "harbor_shelf_s3": {
+    "mAP": 0.9709165596368723,
+    "airgun_ap": 0.8835808183430767,
+    "airgun_n": 32,
+    "fault_ap": 1.0000000000000002
+   },
+   "open_coast_s10": {
+    "mAP": 0.894841965610686,
+    "airgun_ap": 0.5498416135547346,
+    "airgun_n": 20,
+    "fault_ap": 0.9999999999999998
+   },
+   "open_coast_s11": {
+    "mAP": 0.8383610768614024,
+    "airgun_ap": 0.004306288012475062,
+    "airgun_n": 35,
+    "fault_ap": 0.9958333333333333
+   },
+   "offshore_shelf_s40": {
+    "mAP": 0.9129425719610165,
+    "airgun_ap": 0.9775894072668098,
+    "airgun_n": 29,
+    "fault_ap": 0.5982247106743855
+   },
+   "offshore_shelf_s41": {
+    "mAP": 0.8435083119332575,
+    "airgun_ap": 1.0,
+    "airgun_n": 29,
+    "fault_ap": 0.5847523514294816
+   }
+  },
+  "multi-v2": {
+   "harbor_shelf_s2": {
+    "mAP": 0.9792206519206064,
+    "airgun_ap": 0.9445624024652827,
+    "airgun_n": 51,
+    "fault_ap": 1.0
+   },
+   "harbor_shelf_s3": {
+    "mAP": 0.9845315383659571,
+    "airgun_ap": 0.962794599546219,
+    "airgun_n": 32,
+    "fault_ap": 1.0
+   },
+   "open_coast_s10": {
+    "mAP": 0.9494840926540372,
+    "airgun_ap": 0.7953397538116489,
+    "airgun_n": 20,
+    "fault_ap": 1.0
+   },
+   "open_coast_s11": {
+    "mAP": 0.8416779644540124,
+    "airgun_ap": 0.005379677400689195,
+    "airgun_n": 35,
+    "fault_ap": 1.0
+   },
+   "offshore_shelf_s40": {
+    "mAP": 0.9866442201990043,
+    "airgun_ap": 0.9885257088495529,
+    "airgun_n": 29,
+    "fault_ap": 1.0
+   },
+   "offshore_shelf_s41": {
+    "mAP": 0.995117343444376,
+    "airgun_ap": 1.0,
+    "airgun_n": 29,
+    "fault_ap": 0.9999999999999999
+   }
+  }
+ },
+ "snr_strata": {
+  "vessel": [
+   {
+    "snr_db": [
+     10,
+     15
+    ],
+    "n": 945,
+    "recall@1%FPR": 0.9015873015873016,
+    "vessel_type_acc": 0.7386243386243386
+   },
+   {
+    "snr_db": [
+     15,
+     20
+    ],
+    "n": 623,
+    "recall@1%FPR": 0.9983948635634029,
+    "vessel_type_acc": 0.8057784911717496
+   },
+   {
+    "snr_db": [
+     20,
+     30
+    ],
+    "n": 373,
+    "recall@1%FPR": 1.0,
+    "vessel_type_acc": 0.8284182305630027
+   },
+   {
+    "snr_db": [
+     30,
+     80
+    ],
+    "n": 5,
+    "recall@1%FPR": 1.0,
+    "vessel_type_acc": 1.0
+   }
+  ],
+  "airgun": [
+   {
+    "snr_db": [
+     10,
+     12
+    ],
+    "n": 66,
+    "recall@1%FPR": 0.5606060606060606
+   },
+   {
+    "snr_db": [
+     12,
+     14
+    ],
+    "n": 33,
+    "recall@1%FPR": 0.6666666666666666
+   },
+   {
+    "snr_db": [
+     14,
+     30
+    ],
+    "n": 97,
+    "recall@1%FPR": 0.979381443298969
+   }
+  ]
+ },
+ "storm_by_cause": {
+  "harbor_shelf_s2": {
+   "wind>10.5": {
+    "n": 631,
+    "recall@5%FPR": 0.9904912836767037
+   },
+   "rain>2": {
+    "n": 109,
+    "recall@5%FPR": 0.9908256880733946
+   },
+   "runoff>0.5": {
+    "n": 195,
+    "recall@5%FPR": 0.9641025641025641
+   },
+   "only_runoff": {
+    "n": 108,
+    "recall@5%FPR": 0.9351851851851852
+   }
+  },
+  "harbor_shelf_s3": {
+   "wind>10.5": {
+    "n": 629,
+    "recall@5%FPR": 0.9936406995230525
+   },
+   "rain>2": {
+    "n": 262,
+    "recall@5%FPR": 0.9961832061068703
+   },
+   "runoff>0.5": {
+    "n": 175,
+    "recall@5%FPR": 0.9657142857142857
+   },
+   "only_runoff": {
+    "n": 99,
+    "recall@5%FPR": 0.9393939393939394
+   }
+  },
+  "open_coast_s10": {
+   "wind>10.5": {
+    "n": 563,
+    "recall@5%FPR": 0.9982238010657194
+   },
+   "rain>2": {
+    "n": 234,
+    "recall@5%FPR": 0.9145299145299145
+   },
+   "runoff>0.5": {
+    "n": 0,
+    "recall@5%FPR": null
+   },
+   "only_runoff": {
+    "n": 0,
+    "recall@5%FPR": null
+   }
+  },
+  "open_coast_s11": {
+   "wind>10.5": {
+    "n": 538,
+    "recall@5%FPR": 1.0
+   },
+   "rain>2": {
+    "n": 166,
+    "recall@5%FPR": 0.9939759036144579
+   },
+   "runoff>0.5": {
+    "n": 0,
+    "recall@5%FPR": null
+   },
+   "only_runoff": {
+    "n": 0,
+    "recall@5%FPR": null
+   }
+  },
+  "offshore_shelf_s40": {
+   "wind>10.5": {
+    "n": 304,
+    "recall@5%FPR": 1.0
+   },
+   "rain>2": {
+    "n": 147,
+    "recall@5%FPR": 0.9047619047619048
+   },
+   "runoff>0.5": {
+    "n": 0,
+    "recall@5%FPR": null
+   },
+   "only_runoff": {
+    "n": 0,
+    "recall@5%FPR": null
+   }
+  },
+  "offshore_shelf_s41": {
+   "wind>10.5": {
+    "n": 0,
+    "recall@5%FPR": null
+   },
+   "rain>2": {
+    "n": 0,
+    "recall@5%FPR": null
+   },
+   "runoff>0.5": {
+    "n": 0,
+    "recall@5%FPR": null
+   },
+   "only_runoff": {
+    "n": 0,
+    "recall@5%FPR": null
+   }
+  }
+ },
+ "ft_from_Aonly": {
+  "B": {
+   "0": {
+    "season1": {
+     "mAP": 0.9500851477123547,
+     "storm_ap": 0.92193555572456,
+     "vessel_type_acc": 0.49444444444444446,
+     "mAP_std": 0.0
+    },
+    "season2": {
+     "mAP": 0.910686598463526,
+     "storm_ap": 0.6306712298368492,
+     "vessel_type_acc": 0.4161849710982659,
+     "mAP_std": 0.0
+    }
+   },
+   "108": {
+    "season1": {
+     "mAP": 0.9604547625682313,
+     "storm_ap": 0.9225766679687505,
+     "vessel_type_acc": 0.5018518518518519,
+     "mAP_std": 0.0002298331006016457
+    },
+    "season2": {
+     "mAP": 0.9242021744036074,
+     "storm_ap": 0.6835186965166112,
+     "vessel_type_acc": 0.4354527938342967,
+     "mAP_std": 0.0011912160379970683
+    }
+   },
+   "216": {
+    "season1": {
+     "mAP": 0.9636850227859574,
+     "storm_ap": 0.9148644337263828,
+     "vessel_type_acc": 0.48888888888888893,
+     "mAP_std": 0.00016577607865478935
+    },
+    "season2": {
+     "mAP": 0.9186394799953627,
+     "storm_ap": 0.6311594982022601,
+     "vessel_type_acc": 0.43352601156069365,
+     "mAP_std": 0.0013707579261630454
+    }
+   },
+   "432": {
+    "season1": {
+     "mAP": 0.9654073736592209,
+     "storm_ap": 0.9097835911061024,
+     "vessel_type_acc": 0.5851851851851851,
+     "mAP_std": 0.0004299293976574315
+    },
+    "season2": {
+     "mAP": 0.9221653299360538,
+     "storm_ap": 0.6423710357233435,
+     "vessel_type_acc": 0.4971098265895954,
+     "mAP_std": 0.001227383079631792
+    }
+   },
+   "648": {
+    "season1": {
+     "mAP": 0.9665485872048323,
+     "storm_ap": 0.9130171600968078,
+     "vessel_type_acc": 0.6166666666666667,
+     "mAP_std": 0.0010245683594772282
+    },
+    "season2": {
+     "mAP": 0.9219086735218882,
+     "storm_ap": 0.6373955632128948,
+     "vessel_type_acc": 0.48747591522157996,
+     "mAP_std": 0.0009436618362938775
+    }
+   }
+  },
+  "E": {
+   "0": {
+    "season1": {
+     "mAP": 0.9599356219478138,
+     "storm_ap": 0.8712015465850326,
+     "vessel_type_acc": 0.691358024691358,
+     "mAP_std": 0.0
+    },
+    "season2": {
+     "mAP": 0.9620167891303507,
+     "storm_ap": NaN,
+     "vessel_type_acc": 0.6976744186046512,
+     "mAP_std": 0.0
+    }
+   },
+   "108": {
+    "season1": {
+     "mAP": 0.9508870215212358,
+     "storm_ap": 0.8799608870442528,
+     "vessel_type_acc": 0.7078189300411522,
+     "mAP_std": 0.0034287015003885966
+    },
+    "season2": {
+     "mAP": 0.9666229695369895,
+     "storm_ap": NaN,
+     "vessel_type_acc": 0.7286821705426356,
+     "mAP_std": 0.001303045966787422
+    }
+   },
+   "216": {
+    "season1": {
+     "mAP": 0.9538359302016738,
+     "storm_ap": 0.8699332188104393,
+     "vessel_type_acc": 0.6954732510288065,
+     "mAP_std": 0.0004772091868138968
+    },
+    "season2": {
+     "mAP": 0.96368181674558,
+     "storm_ap": NaN,
+     "vessel_type_acc": 0.6744186046511628,
+     "mAP_std": 0.0003768927111626757
+    }
+   },
+   "432": {
+    "season1": {
+     "mAP": 0.9434260936173812,
+     "storm_ap": 0.8709052734105889,
+     "vessel_type_acc": 0.7530864197530865,
+     "mAP_std": 0.00018747829561667953
+    },
+    "season2": {
+     "mAP": 0.9627113824499655,
+     "storm_ap": NaN,
+     "vessel_type_acc": 0.7674418604651163,
+     "mAP_std": 0.0006180676943591574
+    }
+   },
+   "648": {
+    "season1": {
+     "mAP": 0.9355333900632496,
+     "storm_ap": 0.8701250936639561,
+     "vessel_type_acc": 0.7818930041152262,
+     "mAP_std": 0.0014523956086811148
+    },
+    "season2": {
+     "mAP": 0.9617759795208404,
+     "storm_ap": NaN,
+     "vessel_type_acc": 0.7906976744186046,
+     "mAP_std": 0.0007299294789477771
+    }
+   }
+  }
+ },
+ "cargo_tanker_bayes_bound_true_blade_rate_only": {
+  "accuracy": 0.8823529411764706,
+  "n_passages": 391,
+  "cargo_share": 0.6061381074168798
+ }
+}
