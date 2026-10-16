@@ -1,5 +1,21 @@
 # Marine Ecosystem Monitoring System
 
+Low-cost, edge-computed passive acoustic and water-quality monitoring node (hydrophone + temperature, pH, turbidity, salinity on a Raspberry Pi) that flags vessels, seismic surveys, storms, wildlife and its own sensor faults on-device and reports compact summaries over a low-bandwidth link.
+
+| | |
+|---|---|
+| **Design** | locked decisions, architecture, hardware spec, data and ML pipeline docs ([Documentation](#documentation)) |
+| **Software** | `edge/` Pi-side stack (runs today with mock hardware), `simulation/` ML pipeline proof, `tools/` power budget |
+| **Evidence** | physics-based ocean simulator, 5 sites, 2 held out: mean mAP 0.975 on unseen weather/season/site tests (synthetic data only) |
+| **Not yet** | hardware, field data, real-data validation (one four-file smoke test only) |
+
+```
+pip install -r requirements.txt
+pytest simulation edge tools                       # 74 tests
+python -m edge.main --once                         # one mock-hardware capture window
+# ocean simulator + experiments: see simulation/ocean/README.md ("Run")
+```
+
 **Status: (In Development) — no hardware purchased yet; hardware BOM/pricing and a power budget are still open.** Design documentation is locked (see [DECISIONS.md](DECISIONS.md)). Two implementation trees now exist: `simulation/` (synthetic-hardware proof of the ML pipeline, see below) and `edge/` (the real production Pi-side software — capture loop, calibration, telemetry, scheduler — runnable today in mock-hardware mode with zero hardware attached; see [docs/pi-implementation.md](docs/pi-implementation.md)).
 
 ![Simulation results](diagrams/results-chart.svg)
@@ -51,7 +67,7 @@ Marine ecosystems generate continuous acoustic and environmental signal — biol
 ## Implementation
 
 - `simulation/` — synthetic-hardware proof that the ML pipeline design works end-to-end (see [simulation/README.md](simulation/README.md)).
-- `simulation/ocean/` — physics-based ocean simulator with detection/classification experiments and figure rendering (see [simulation/ocean/README.md](simulation/ocean/README.md)).
+- `simulation/ocean/` — physics-based ocean simulator (five sites, coupled weather/water/biology/ships/faults), Stage 2 and Stage 3 experiments, ablations, robustness and edge timing, with committed result snapshots and figures (see [simulation/ocean/README.md](simulation/ocean/README.md)).
 - `edge/` — the real Pi-side production software: hardware abstraction layer (mock backend usable today, real backend stubbed for once hardware exists), capture loop, calibration, telemetry payload assembly, duty-cycle scheduler. Run `python -m edge.main --once` for a one-window smoke test. See [docs/pi-implementation.md](docs/pi-implementation.md).
 - `tools/power_budget.py` — standalone power budget estimator (duty cycle vs. solar/battery sizing) using placeholder component draw figures, pending a priced BOM. Run `python tools/power_budget.py --help`.
 - `deploy/marine-monitor.service` — systemd unit for running `edge/` unattended once real hardware is wired.
@@ -67,7 +83,8 @@ Suggested reading order, with why each doc sits where it does:
 1. [docs/architecture.md](docs/architecture.md) — start here: the whole-system picture (sensor -> Pi -> processing -> telemetry -> storage/output) everything else is a component or detail of.
 2. [docs/data-pipeline.md](docs/data-pipeline.md) — the storage/data-flow half of that architecture in detail: duty-cycle sampling, storage tiers, SQLite schema.
 3. [docs/ml-pipeline.md](docs/ml-pipeline.md) — what happens to the data data-pipeline.md describes once it reaches Stage 1/2 feature extraction and anomaly detection.
-4. [simulation/README.md](simulation/README.md) — the ml-pipeline.md design as running code: synthetic data standing in for real hardware, exercising the same pipeline end-to-end.
+4. [simulation/README.md](simulation/README.md) — the ml-pipeline.md design as running code: synthetic data standing in for real hardware, exercising the same pipeline end-to-end. Then [simulation/ocean/README.md](simulation/ocean/README.md) for the physics-based simulator and the full results.
 5. [docs/hardware-spec.md](docs/hardware-spec.md) — the physical components the architecture and pipeline above assume, once you want to know what they'd run on.
 6. [docs/related-work.md](docs/related-work.md) — how the above design choices relate to existing prior art, useful once the design itself is understood.
-7. [DECISIONS.md](DECISIONS.md) — last as a reference, not reading material: the locked decisions everything above is kept consistent with, for looking something up rather than reading start to end.
+7. [docs/project-highlights.md](docs/project-highlights.md) — presentation / interview guide: pitch, strengths with evidence, weak spots found and fixed, likely questions, limitations.
+8. [DECISIONS.md](DECISIONS.md) — last as a reference, not reading material: the locked decisions everything above is kept consistent with, for looking something up rather than reading start to end.
