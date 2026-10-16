@@ -27,6 +27,7 @@ from simulation.pipeline.feature_extraction import extract_acoustic_features
 from simulation.pipeline.signal_conditioning import condition_signal
 
 from . import anthro, bio
+from .lofar import comb_features, lofar_whitened
 from .physics import shape_noise, wenz_psd_db
 from .weather import SITE_A, Site, simulate_environment
 
@@ -201,6 +202,8 @@ def synthesize_window(i, sh, want_components=False):
     feats = extract_acoustic_features(cond, FS)
     feats["snr_after_db"] = diag["snr_after_db"]
     feats.update(acoustic_extras(audio))
+    lof = lofar_whitened(audio)
+    feats.update(comb_features(lof))
     mel = librosa.power_to_db(
         librosa.feature.melspectrogram(y=audio.astype(np.float32), sr=FS, n_fft=2048, hop_length=HOP,
                                        n_mels=N_MELS, fmin=20, fmax=11000, power=2.0),
@@ -212,8 +215,8 @@ def synthesize_window(i, sh, want_components=False):
            "bio_whale_range_m": st["whale_range"], "bio_shrimp_rate": st["shrimp_rate"],
            "bio_fish_level": st["fish_level"], "bio_fish_callers": st["fish_callers"]}
     if want_components:
-        return row, mel, audio, comps, background
-    return row, mel
+        return row, mel, lof, audio, comps, background
+    return row, mel, lof
 
 
 def _render_chunk(idx, sh):
@@ -234,7 +237,7 @@ def _sensor_model(env, faults, rng):
         if f["type"] == "env_stuck":
             s, e = f["start"], f["end"]
             tu[s:e], ph[s:e] = tu[s], ph[s]
-            stuck[s:e] = True
+            stuck[s + 1:e] = True               # window s still holds a valid reading
     spikes = rng.random(n) < 0.003
     tu = tu + spikes * rng.uniform(3, 10, n)
     out = pd.DataFrame({"temperature_c": t, "ph": ph, "turbidity_ntu": np.clip(tu, 0.05, None), "salinity_psu": sa})
@@ -284,11 +287,12 @@ def run_scenario(site=SITE_A, n_days=30, seed=0, start_doy=90, interval_min=10.0
     step = max(int(np.ceil(n / 32)), 8)
     chunks = [list(range(s, min(s + step, n))) for s in range(0, n, step)]
     res = Parallel(n_jobs=n_jobs, verbose=0)(delayed(_render_chunk)(c, sh) for c in chunks)
-    rows, mels = [], []
+    rows, mels, lofs = [], [], []
     for chunk in res:
-        for r, m in chunk:
+        for r, m, lf in chunk:
             rows.append(r)
             mels.append(m)
+            lofs.append(lf)
     lab = pd.DataFrame(rows).set_index("window_index", drop=False)
     df = pd.concat([env.set_index("window_index", drop=False), lab.drop(columns=["window_index"], errors="ignore")], axis=1)
     # observed sensors replace truth under the same names; keep truth with _true suffix
@@ -307,6 +311,7 @@ def run_scenario(site=SITE_A, n_days=30, seed=0, start_doy=90, interval_min=10.0
         os.makedirs(out_dir, exist_ok=True)
         df.to_pickle(os.path.join(out_dir, "windows.pkl"))
         np.save(os.path.join(out_dir, "mel.npy"), mel)
+        np.save(os.path.join(out_dir, "lofar.npy"), np.stack(lofs).astype(np.float16))
         with open(os.path.join(out_dir, "events.json"), "w") as f:
             json.dump(meta, f, default=float)
         if save_examples:
@@ -331,5 +336,5 @@ def _save_examples(df, sh, audio_dir, per_class=2):
         for j in idx[:: max(len(idx) // per_class, 1)][:per_class]:
             picks[f"{name}_{j}"] = j
     for name, j in picks.items():
-        _, _, audio, _, _ = synthesize_window(j, sh, want_components=True)
+        _, _, _, audio, _, _ = synthesize_window(j, sh, want_components=True)
         wavfile.write(os.path.join(audio_dir, f"{name}.wav"), FS, audio)

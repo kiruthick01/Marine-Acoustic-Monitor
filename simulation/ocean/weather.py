@@ -57,6 +57,31 @@ SITE_B = Site(
     base_temp_offset=-2.5,
 )
 
+# Further sites. A, C, D are used for training (domain randomisation over depth / traffic / runoff / climate);
+# B and E are held out entirely (never seen in pre-training) to measure transfer to a new deployment.
+SITE_C = Site(
+    name="estuary_bay", lat_deg=38.5, water_depth_m=32.0, hydrophone_depth_m=14.0,
+    mean_salinity=31.5, fetch_factor=0.4, tide_scale=1.4, river_influence=1.8,
+    shipping_index=0.8, vessel_rate_per_day=16.0, dolphin_density=1.3,
+    whale_density=0.3, shrimp_density=0.8, fish_density=1.4, spreading_k=14.0,
+    base_temp_offset=1.5,
+)
+SITE_D = Site(
+    name="strait_channel", lat_deg=47.0, water_depth_m=48.0, hydrophone_depth_m=20.0,
+    mean_salinity=33.0, fetch_factor=0.7, tide_scale=1.8, river_influence=0.8,
+    shipping_index=0.9, vessel_rate_per_day=20.0, dolphin_density=0.9,
+    whale_density=1.0, shrimp_density=0.05, fish_density=1.0, spreading_k=16.0,
+    base_temp_offset=-5.0,
+)
+SITE_E = Site(
+    name="offshore_shelf", lat_deg=44.0, water_depth_m=110.0, hydrophone_depth_m=40.0,
+    mean_salinity=34.8, fetch_factor=1.0, tide_scale=0.4, river_influence=0.05,
+    shipping_index=0.5, vessel_rate_per_day=3.0, dolphin_density=0.5,
+    whale_density=2.0, shrimp_density=0.05, fish_density=0.4, spreading_k=18.0,
+    base_temp_offset=-3.5,
+)
+SITES = {s.name: s for s in (SITE_A, SITE_B, SITE_C, SITE_D, SITE_E)}
+
 
 def _ou(n, tau, sigma, rng, x0=0.0):
     """Ornstein-Uhlenbeck path with unit step."""

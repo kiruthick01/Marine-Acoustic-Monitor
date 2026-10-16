@@ -16,8 +16,8 @@ from .physics import (KNOT_MS, db_to_upa, ross_source_level_db, shape_noise, tra
 
 # class: length range m, speed range kn, shaft Hz, blades, CPA range m, hourly weight shape, share
 VESSEL_CLASSES = {
-    "cargo":    dict(L=(150, 300), kn=(10, 16), shaft=(1.3, 1.9), blades=5, cpa=(1200, 3500), share=0.22, bb=12.0),
-    "tanker":   dict(L=(180, 330), kn=(8, 14), shaft=(1.1, 1.6), blades=4, cpa=(1500, 3500), share=0.12, bb=16.0),
+    "cargo":    dict(L=(150, 300), kn=(10, 16), shaft=(1.2, 1.9), blades=5, cpa=(1200, 3500), share=0.22, bb=12.0),
+    "tanker":   dict(L=(180, 330), kn=(8, 14), shaft=(1.1, 1.7), blades=4, cpa=(1500, 3500), share=0.12, bb=16.0),
     "ferry":    dict(L=(40, 90), kn=(16, 24), shaft=(6.0, 10.0), blades=4, cpa=(250, 1500), share=0.14, bb=6.0),
     "fishing":  dict(L=(15, 35), kn=(4, 9), shaft=(7.0, 12.0), blades=3, cpa=(100, 1800), share=0.22, bb=8.0),
     "outboard": dict(L=(5, 12), kn=(14, 30), shaft=(35.0, 60.0), blades=3, cpa=(60, 900), share=0.30, bb=8.0),
@@ -146,7 +146,7 @@ def schedule_airgun_campaigns(n_windows, interval_min, rng, prob=0.5):
             if total - dur - 20 <= 20:
                 continue
             s = int(rng.integers(20, total - dur - 10))
-            camps.append((s, s + dur, float(rng.uniform(15000, 45000))))
+            camps.append((s, s + dur, float(rng.uniform(8000, 60000))))
     return camps
 
 

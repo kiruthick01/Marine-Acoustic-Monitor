@@ -1,21 +1,20 @@
 """
-Stage 3 (supervised multi-label classification) + transfer/fine-tuning, on the physics-based ocean dataset.
+Stage 3: supervised multi-label classification, domain generalisation and few-label adaptation on the ocean corpus.
 
-Targets per window (multi-label): vessel, dolphin, whale, fish chorus, seismic airgun, storm, instrument fault;
-plus a 5-way vessel-type head (cargo/tanker/ferry/fishing/outboard) trained on vessel windows.
+Labels per window: vessel, dolphin, whale, fish chorus, seismic airgun, storm, instrument fault (+ 5-way vessel type).
 
-Models
-  GB   gradient boosting on calibrated tabular features (+ env sensors + clock), random-search tuned
-  CNN  small convnet on the 64-band log-mel spectrogram, with env/clock vector fused in the head
+Corpus (see ocean_generate.py)
+  train   sites A, C, D (+ event-rich runs), first 80% of each run     val  last 20% (early stop, thresholds, calibration)
+  test    A s2 (unseen weather), A s3 (unseen season), and two fully HELD-OUT sites, B and E, each in two seasons.
+          Held-out windows used for adaptation (first 25% of every B/E run) are never in the test slice.
 
-Splits (no leakage: chronological blocks and whole unseen runs)
-  train      site A runs s0,s1 + event-rich s4-s6, first 80%   val   same runs, last 20% (tuning / early stop / thresholds)
-  test-A     site A s2          unseen weather, same site/season
-  test-season site A s3         unseen season (summer vs spring)
-  B zero-shot: site B (60 m deep, different species mix / traffic / noise) with the model trained on A only
-  B fine-tune: B s10 first 15% = labelled adaptation set, next 10% = val, last 75% = test; B s11 = other season
+Model grid (ablation)   inputs {v1: mel + env, v2: + sensor-health context + narrowband LOFAR/comb}  x
+                        training {A only, multi-site A+C+D}; GB baselines on the matching tabular features.
+Domain adaptation       zero-shot, AdaBN (unlabeled BN-statistics re-estimation), few-label fine-tuning learning curve,
+                        and two-season re-adaptation; scratch baseline trained on the same labelled windows.
 
-  python simulation/scripts/ocean_classify.py
+  python simulation/scripts/ocean_classify.py                # train + evaluate everything (~2-3 h on 16 cores)
+  python simulation/scripts/ocean_classify.py --skip-train   # reuse saved weights in output/ocean/models
 """
 
 import argparse
@@ -29,48 +28,109 @@ import warnings
 import numpy as np
 import pandas as pd
 import torch
-import torch.nn as nn
-import torch.nn.functional as F
 from sklearn.ensemble import HistGradientBoostingClassifier
-from sklearn.metrics import average_precision_score, f1_score
+from sklearn.metrics import average_precision_score, f1_score, roc_auc_score
 
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), "..", ".."))
 
-from simulation.ocean.dataset import (ACO_EXT, CTX, ENV_RAW, LABELS, OUT_DIR, VESSEL_CLASSES,  # noqa: E402
-                                      load_run)
+from simulation.ocean.dataset import (ACO_EXT, COMB, CTX, ENV_RAW, LABELS, OUT_DIR, TEMPORAL,  # noqa: E402
+                                      VESSEL_CLASSES, load_lofar, load_run)
+from simulation.ocean.models import (Data, Net, Norm, adabn, ece, fit_temperature, make_data,  # noqa: E402
+                                     predict, train_net)
 
 warnings.filterwarnings("ignore")
 torch.set_num_threads(max(os.cpu_count() or 4, 4))
-TAB = ACO_EXT + ENV_RAW + CTX
-VEC = ENV_RAW + CTX
+
+TAB_V1 = ACO_EXT + ENV_RAW + CTX
+TAB_V2 = TAB_V1 + TEMPORAL + COMB
+VEC_V1 = ENV_RAW + CTX
+VEC_V2 = ENV_RAW + CTX + TEMPORAL + COMB
+MODELS_DIR = os.path.join(OUT_DIR, "models")
+
+TRAIN_MULTI = ["harbor_shelf_s0", "harbor_shelf_s1", "estuary_bay_s20", "estuary_bay_s21",
+               "strait_channel_s30", "strait_channel_s31",
+               "rich_harbor_s4", "rich_harbor_s5", "rich_harbor_s6", "rich_estuary_s7", "rich_strait_s8"]
+TRAIN_A = ["harbor_shelf_s0", "harbor_shelf_s1", "rich_harbor_s4", "rich_harbor_s5", "rich_harbor_s6"]
+HELD_OUT = {"B": ("open_coast_s10", "open_coast_s11"), "E": ("offshore_shelf_s40", "offshore_shelf_s41")}
 
 
 # ------------------------------------------------------------------ helpers
-def split(df, mel, a, b):
-    n = len(df)
-    sl = slice(int(a * n), int(b * n))
-    return df.iloc[sl], mel[sl]
-
-
 def vclass_idx(df):
     m = {c: i for i, c in enumerate(VESSEL_CLASSES)}
     return np.array([m.get(c, -1) if isinstance(c, str) else -1 for c in df["vessel_class"]])
 
 
-def metrics(Y, P, thr, vc_true=None, vc_prob=None):
-    out = {"ap": {}, "f1": {}}
+class Run:
+    """One simulated run with chronological slicing."""
+
+    def __init__(self, name):
+        self.name = name
+        self.df, self.mel = load_run(name)
+        self.lofar = load_lofar(name)
+
+    def cut(self, a, b):
+        n = len(self.df)
+        sl = slice(int(round(a * n)), int(round(b * n)))
+        return Slice(self.df.iloc[sl], self.mel[sl], self.lofar[sl])
+
+
+class Slice:
+    def __init__(self, df, mel, lofar):
+        self.df, self.mel, self.lofar = df, mel, lofar
+
+    def __len__(self):
+        return len(self.df)
+
+    @staticmethod
+    def concat(parts):
+        return Slice(pd.concat([p.df for p in parts]), np.concatenate([p.mel for p in parts]),
+                     np.concatenate([p.lofar for p in parts]))
+
+    def every(self, k):
+        return Slice(self.df.iloc[::k], self.mel[::k], self.lofar[::k])
+
+    def head(self, n):
+        return Slice(self.df.iloc[:n], self.mel[:n], self.lofar[:n])
+
+
+def eval_scores(sl, P, VC, thr):
+    """Threshold-free + thresholded metrics, fault-type recall at 1% FPR, and vessel-type breakdowns."""
+    df = sl.df
+    Y = df[LABELS].values.astype(int)
+    out = {"ap": {}, "f1": {}, "n_pos": {}}
     for j, lab in enumerate(LABELS):
         y = Y[:, j]
+        out["n_pos"][lab] = int(y.sum())
         out["ap"][lab] = float(average_precision_score(y, P[:, j])) if 0 < y.sum() < len(y) else float("nan")
         out["f1"][lab] = float(f1_score(y, P[:, j] > thr[j], zero_division=0)) if y.sum() > 0 else float("nan")
     out["mAP"] = float(np.nanmean(list(out["ap"].values())))
     out["macroF1"] = float(np.nanmean(list(out["f1"].values())))
-    if vc_true is not None:
-        m = vc_true >= 0
-        if m.sum() > 5:
-            pred = vc_prob[m].argmax(1)
-            out["vessel_type_acc"] = float((pred == vc_true[m]).mean())
-            out["vessel_type_macroF1"] = float(f1_score(vc_true[m], pred, average="macro", zero_division=0))
+    # fault type recall at a fixed 1% false-positive rate (what a deployed alarm would use)
+    j = LABELS.index("fault_any")
+    neg = ~df["fault_any"].values
+    if neg.sum() > 100:
+        t = np.quantile(P[neg, j], 0.99)
+        ftype = {"hum": df["fault_audio"].values == "hum", "pops": df["fault_audio"].values == "pops",
+                 "dropout": df["fault_audio"].values == "dropout", "stuck_sensor": df["fault_env"].values}
+        out["fault_recall@1%FPR"] = {k: (float((P[m, j] > t).mean()) if m.sum() else float("nan"))
+                                     for k, m in ftype.items()}
+    vc = vclass_idx(df)
+    m = vc >= 0
+    if VC is not None and m.sum() > 5:
+        pred = VC[m].argmax(1)
+        out["vessel_type_acc"] = float((pred == vc[m]).mean())
+        out["vessel_type_macroF1"] = float(f1_score(vc[m], pred, average="macro", zero_division=0))
+        fam = np.array([0, 0, 1, 2, 3])        # merchant (cargo+tanker), ferry, fishing, outboard
+        pf = np.stack([VC[m][:, :2].sum(1), VC[m][:, 2], VC[m][:, 3], VC[m][:, 4]], 1).argmax(1)
+        out["vessel_family_acc"] = float((pf == fam[vc[m]]).mean())
+        ct = m & (vc <= 1)
+        if ct.sum() > 5 and len(set(vc[ct])) == 2:
+            s = VC[ct][:, 0] / (VC[ct][:, 0] + VC[ct][:, 1] + 1e-9)
+            out["cargo_vs_tanker_acc"] = float(((s > 0.5) == (vc[ct] == 0)).mean())
+            out["cargo_vs_tanker_auc"] = float(roc_auc_score(vc[ct] == 0, s))
+        loud = m & (df["snr_vessel_db"].values >= 20)
+        if loud.sum() > 5:
+            out["vessel_type_acc_snr>=20dB"] = float((VC[loud].argmax(1) == vc[loud]).mean())
     return out
 
 
@@ -80,24 +140,23 @@ def best_thresholds(Y, P):
         if Y[:, j].sum() == 0:
             continue
         cands = np.linspace(0.05, 0.95, 19)
-        f = [f1_score(Y[:, j], P[:, j] > t, zero_division=0) for t in cands]
-        thr[j] = cands[int(np.argmax(f))]
+        thr[j] = cands[int(np.argmax([f1_score(Y[:, j], P[:, j] > t, zero_division=0) for t in cands]))]
     return thr
 
 
-# ------------------------------------------------------------------ GB model
-def fit_gb(tr, va, trials=6, seed=0, sample_weight=None):
+# ------------------------------------------------------------------ gradient boosting
+def fit_gb(tr, va, cols, trials=6, seed=0, sample_weight=None):
     rng = np.random.default_rng(seed)
-    Xtr, Xva = tr[TAB].values, va[TAB].values if va is not None else None
-    models, picked = [], []
-    for j, lab in enumerate(LABELS):
-        y, yv = tr[lab].values.astype(int), (va[lab].values.astype(int) if va is not None else None)
+    Xtr, Xva = tr[cols].values, (va[cols].values if va is not None else None)
+    models = []
+    for lab in LABELS:
+        y = tr[lab].values.astype(int)
         if y.sum() < 3:
             models.append(None)
-            picked.append(None)
             continue
+        yv = va[lab].values.astype(int) if va is not None else None
         best, bm = -1, None
-        for t in range(trials if va is not None else 1):
+        for _ in range(trials if va is not None else 1):
             kw = dict(learning_rate=float(rng.choice([0.04, 0.08, 0.15])), max_leaf_nodes=int(rng.choice([8, 15, 31])),
                       l2_regularization=float(rng.choice([0.0, 0.5, 2.0])), max_iter=int(rng.choice([150, 300])),
                       min_samples_leaf=int(rng.choice([10, 20])), random_state=seed)
@@ -105,280 +164,229 @@ def fit_gb(tr, va, trials=6, seed=0, sample_weight=None):
             m.fit(Xtr, y, sample_weight=sample_weight)
             sc = average_precision_score(yv, m.predict_proba(Xva)[:, 1]) if (va is not None and yv.sum() > 0) else 0.0
             if sc > best:
-                best, bm, bkw = sc, m, kw
+                best, bm = sc, m
         models.append(bm)
-        picked.append(bkw)
-    return models, picked
+    return models
 
 
-def pred_gb(models, df):
-    X = df[TAB].values
+def pred_gb(models, df, cols):
+    X = df[cols].values
     return np.stack([m.predict_proba(X)[:, 1] if m is not None else np.zeros(len(df)) for m in models], axis=1)
 
 
-# ------------------------------------------------------------------ CNN model
-class Net(nn.Module):
-    def __init__(self, n_vec, n_lab, n_vc, width=24):
-        super().__init__()
-        w = width
-        chans = [1, w, 2 * w, 4 * w, 4 * w]
-        self.blocks = nn.ModuleList()
-        for i in range(4):
-            self.blocks.append(nn.Sequential(
-                nn.Conv2d(chans[i], chans[i + 1], 3, padding=1, bias=False), nn.BatchNorm2d(chans[i + 1]), nn.ReLU(),
-                nn.Conv2d(chans[i + 1], chans[i + 1], 3, padding=1, bias=False), nn.BatchNorm2d(chans[i + 1]), nn.ReLU(),
-                nn.MaxPool2d(2)))
-        self.vec = nn.Sequential(nn.Linear(n_vec, 32), nn.ReLU())
-        self.drop = nn.Dropout(0.3)
-        d = 4 * w * 2 + 32
-        self.head = nn.Linear(d, n_lab)
-        self.vc_head = nn.Linear(d, n_vc)
-
-    def forward(self, x, v):
-        for b in self.blocks:
-            x = b(x)
-        z = torch.cat([x.mean((2, 3)), x.amax((2, 3)), self.vec(v)], dim=1)
-        z = self.drop(z)
-        return self.head(z), self.vc_head(z)
+# ------------------------------------------------------------------ CNN variants
+def new_net(variant, width):
+    v2 = variant.endswith("v2")
+    return Net(len(VEC_V2 if v2 else VEC_V1), len(LABELS), len(VESSEL_CLASSES), width, use_lofar=v2)
 
 
-class Norm:
-    def __init__(self, mel_ref, vec_ref):
-        m = mel_ref.astype(np.float32)
-        self.mu = m.mean(axis=(0, 2), keepdims=True)[None]
-        self.sd = m.std(axis=(0, 2), keepdims=True)[None] + 1e-3
-        self.vmed = np.median(vec_ref, axis=0)
-        q75, q25 = np.percentile(vec_ref, [75, 25], axis=0)
-        self.vsc = np.maximum((q75 - q25) / 1.349, vec_ref.std(0) * 0.25 + 1e-6)
+class Variant:
+    """Bundles net + normaliser + the column set for one (inputs, training-corpus) combination."""
 
-    def mel(self, m):
-        return torch.tensor((m.astype(np.float32)[:, None] - self.mu) / self.sd)
+    def __init__(self, tag, train_names, width):
+        self.tag = tag
+        self.v2 = tag.endswith("v2")
+        self.cols = VEC_V2 if self.v2 else VEC_V1
+        self.width = width
+        self.train_names = train_names
+        self.net = None
+        self.norm = None
 
-    def vec(self, v):
-        return torch.tensor(np.clip((v - self.vmed) / self.vsc, -10, 10), dtype=torch.float32)
+    def data(self, sl):
+        return make_data(self.norm, sl.df, sl.mel, sl.lofar, self.cols, LABELS, vclass_idx, self.v2)
 
+    def fresh(self):
+        return new_net(self.tag, self.width)
 
-def to_tensors(norm, df, mel):
-    return (norm.mel(mel), norm.vec(df[VEC].values), torch.tensor(df[LABELS].values.astype(np.float32)),
-            torch.tensor(vclass_idx(df)))
-
-
-def augment(x, v, gen):
-    b = x.shape[0]
-    x = x + (torch.rand(b, 1, 1, 1, generator=gen) - 0.5) * 0.6          # +-~3 dB gain / sensitivity drift
-    for i in range(b):
-        f0 = int(torch.randint(0, x.shape[2] - 8, (1,), generator=gen))
-        x[i, :, f0:f0 + int(torch.randint(0, 8, (1,), generator=gen))] = 0.0
-        t0 = int(torch.randint(0, x.shape[3] - 12, (1,), generator=gen))
-        x[i, :, :, t0:t0 + int(torch.randint(0, 12, (1,), generator=gen))] = 0.0
-    return x, v + 0.05 * torch.randn_like(v)
+    def path(self):
+        return os.path.join(MODELS_DIR, f"cnn_{self.tag}.pt")
 
 
-def predict(net, X, V, bs=256):
-    net.eval()
-    ps, vcs = [], []
-    with torch.no_grad():
-        for s in range(0, len(X), bs):
-            lo, vc = net(X[s:s + bs], V[s:s + bs])
-            ps.append(torch.sigmoid(lo))
-            vcs.append(F.softmax(vc, 1))
-    return torch.cat(ps).numpy(), torch.cat(vcs).numpy()
+def split_corpus(runs, names):
+    tr = Slice.concat([runs[n].cut(0.0, 0.8) for n in names])
+    va = Slice.concat([runs[n].cut(0.8, 1.0) for n in names])
+    return tr, va
 
 
-def mean_ap(Y, P):
-    return float(np.nanmean([average_precision_score(Y[:, j], P[:, j]) if 0 < Y[:, j].sum() < len(Y) else np.nan
-                             for j in range(Y.shape[1])]))
-
-
-def train_net(net, train, val, epochs, lr, seed, trainable=None, patience=6, bs=96, log=None, wd=1e-3):
-    X, V, Y, C = train
-    gen = torch.Generator().manual_seed(seed)
-    torch.manual_seed(seed)
-    params = [p for n, p in net.named_parameters() if trainable is None or trainable(n)]
-    opt = torch.optim.AdamW(params, lr=lr, weight_decay=wd)
-    steps = epochs * int(np.ceil(len(X) / bs))
-    sched = torch.optim.lr_scheduler.OneCycleLR(opt, max_lr=lr, total_steps=steps, pct_start=0.2)
-    pos = Y.sum(0).clamp(min=1)
-    pw = torch.clamp(((len(Y) - pos) / pos).sqrt(), 1.0, 12.0)
-    best, best_state, bad, hist = -1, None, 0, []
-    for ep in range(epochs):
-        net.train()
-        perm = torch.randperm(len(X), generator=gen)
-        tot = 0.0
-        for s in range(0, len(X), bs):
-            idx = perm[s:s + bs]
-            if len(idx) < 4:
-                continue
-            xb, vb = augment(X[idx].clone(), V[idx], gen)
-            lo, vc = net(xb, vb)
-            loss = F.binary_cross_entropy_with_logits(lo, Y[idx], pos_weight=pw)
-            m = C[idx] >= 0
-            if m.any():
-                loss = loss + 0.3 * F.cross_entropy(vc[m], C[idx][m])
-            opt.zero_grad()
-            loss.backward()
-            opt.step()
-            sched.step()
-            tot += float(loss) * len(idx)
-        score = mean_ap(val[2].numpy(), predict(net, val[0], val[1])[0])
-        hist.append((tot / len(X), score))
-        if log:
-            print(f"    ep{ep + 1:02d} loss {tot / len(X):.3f} val mAP {score:.3f}", flush=True)
-        if score > best:
-            best, best_state, bad = score, copy.deepcopy(net.state_dict()), 0
-        else:
-            bad += 1
-            if bad >= patience:
-                break
-    net.load_state_dict(best_state)
-    return net, hist, best
-
-
-# ------------------------------------------------------------------ main
 def main():
     ap = argparse.ArgumentParser()
-    ap.add_argument("--epochs", type=int, default=22)
+    ap.add_argument("--epochs", type=int, default=16)
     ap.add_argument("--ft-seeds", type=int, default=3)
     ap.add_argument("--width", type=int, default=24)
+    ap.add_argument("--skip-train", action="store_true")
+    ap.add_argument("--smoke", action="store_true", help="tiny subsampled run to test the code path")
+    ap.add_argument("--neg-frac", type=float, default=0.5)
     a = ap.parse_args()
     t_start = time.time()
+    global MODELS_DIR
+    if a.smoke:
+        MODELS_DIR = os.path.join(OUT_DIR, "models_smoke")
+    os.makedirs(MODELS_DIR, exist_ok=True)
 
-    R = {n: load_run(n) for n in ("harbor_shelf_s0", "harbor_shelf_s1", "harbor_shelf_s2", "harbor_shelf_s3",
-                                  "open_coast_s10", "open_coast_s11",
-                                  "rich_harbor_s4", "rich_harbor_s5", "rich_harbor_s6")}
-    tr_parts, va_parts = [], []
-    for n in ("harbor_shelf_s0", "harbor_shelf_s1", "rich_harbor_s4", "rich_harbor_s5", "rich_harbor_s6"):
-        tr_parts.append(split(*R[n], 0.0, 0.8))
-        va_parts.append(split(*R[n], 0.8, 1.0))
-    A_tr = (pd.concat([p[0] for p in tr_parts]), np.concatenate([p[1] for p in tr_parts]))
-    A_va = (pd.concat([p[0] for p in va_parts]), np.concatenate([p[1] for p in va_parts]))
-    tests = {
-        "A_test_unseen_weather": R["harbor_shelf_s2"],
-        "A_test_other_season": R["harbor_shelf_s3"],
-        "B_zero_shot": split(*R["open_coast_s10"], 0.25, 1.0),
-        "B_other_season": R["open_coast_s11"],
-    }
-    B_ft = split(*R["open_coast_s10"], 0.0, 0.15)
-    B_val = split(*R["open_coast_s10"], 0.15, 0.25)
-    print("train", len(A_tr[0]), "val", len(A_va[0]), "B-ft", len(B_ft[0]), "B-val", len(B_val[0]))
-    print("label prevalence (train): " + ", ".join(f"{l}={A_tr[0][l].mean():.3f}" for l in LABELS))
+    names = sorted(set(TRAIN_MULTI) | {"harbor_shelf_s2", "harbor_shelf_s3"} | {n for v in HELD_OUT.values() for n in v})
+    runs = {n: Run(n) for n in names}
+    print("loaded", len(runs), "runs", flush=True)
 
-    results = {}
+    tests = {"A_unseen_weather": runs["harbor_shelf_s2"].cut(0, 1), "A_unseen_season": runs["harbor_shelf_s3"].cut(0, 1)}
+    adapt = {}
+    for site, (spring, other) in HELD_OUT.items():
+        tests[f"{site}_season1"] = runs[spring].cut(0.25, 1.0)
+        tests[f"{site}_season2"] = runs[other].cut(0.25, 1.0)
+        adapt[site] = {"s1_ft": runs[spring].cut(0.0, 0.15), "s1_val": runs[spring].cut(0.15, 0.25),
+                       "s2_ft": runs[other].cut(0.0, 0.075), "s2_val": runs[other].cut(0.15, 0.25),
+                       "s1_unlab": runs[spring].cut(0.0, 0.25), "s2_unlab": runs[other].cut(0.0, 0.25)}
+    tr_multi, va_multi = split_corpus(runs, TRAIN_MULTI)
+    tr_a, va_a = split_corpus(runs, TRAIN_A)
+    if a.smoke:
+        tr_multi, va_multi, tr_a, va_a = (x.every(12) for x in (tr_multi, va_multi, tr_a, va_a))
+        tests = {k: v.every(6) for k, v in tests.items()}
+        adapt = {s: {k: v.every(4) for k, v in d.items()} for s, d in adapt.items()}
+    print(f"train multi {len(tr_multi)} (A-only {len(tr_a)}), val {len(va_multi)}", flush=True)
+    print("train prevalence: " + ", ".join(f"{l}={tr_multi.df[l].mean():.3f}" for l in LABELS), flush=True)
+
+    R = {"config": vars(a), "tests": {k: {"n": len(v), "prevalence": {l: float(v.df[l].mean()) for l in LABELS},
+                                          "n_vessel_typed": int((vclass_idx(v.df) >= 0).sum())} for k, v in tests.items()}}
     preds = {}
-    Ytest = {k: v[0][LABELS].values.astype(int) for k, v in tests.items()}
+    Ytest = {k: v.df[LABELS].values.astype(int) for k, v in tests.items()}
+    VCtest = {k: vclass_idx(v.df) for k, v in tests.items()}
 
-    # ---------------- GB
-    print("\n== Gradient boosting (random-search tuned on val) ==")
-    gbm, picked = fit_gb(A_tr[0], A_va[0])
-    P_va = pred_gb(gbm, A_va[0])
-    thr_gb = best_thresholds(A_va[0][LABELS].values.astype(int), P_va)
-    for k, (d, m) in tests.items():
-        P = pred_gb(gbm, d)
-        results[f"GB/{k}"] = metrics(Ytest[k], P, thr_gb)
-        preds[f"GB/{k}"] = P
-        print(f"  {k:24s} mAP {results[f'GB/{k}']['mAP']:.3f}  macroF1 {results[f'GB/{k}']['macroF1']:.3f}")
+    # ------------- gradient boosting baselines
+    print("\n== Gradient boosting ==", flush=True)
+    gb_cfg = {"GB-v1-Aonly": (tr_a, va_a, TAB_V1), "GB-v1-multi": (tr_multi, va_multi, TAB_V1),
+              "GB-v2-multi": (tr_multi, va_multi, TAB_V2)}
+    for tag, (tr, va, cols) in gb_cfg.items():
+        models = fit_gb(tr.df, va.df, cols)
+        thr = best_thresholds(va.df[LABELS].values.astype(int), pred_gb(models, va.df, cols))
+        for k, sl in tests.items():
+            P = pred_gb(models, sl.df, cols)
+            R[f"{tag}/{k}"] = eval_scores(sl, P, None, thr)
+            preds[f"{tag}/{k}"] = P
+        print(f"  {tag:14s} " + " ".join(f"{k}:{R[f'{tag}/{k}']['mAP']:.3f}" for k in tests), flush=True)
 
-    # ---------------- CNN pretrain on A
-    print("\n== CNN pretrain on site A ==")
-    norm = Norm(A_tr[1], A_tr[0][VEC].values)
-    TR, VA = to_tensors(norm, *A_tr), to_tensors(norm, *A_va)
-    net = Net(len(VEC), len(LABELS), len(VESSEL_CLASSES), a.width)
-    print("  params:", sum(p.numel() for p in net.parameters()))
-    net, hist, best = train_net(net, TR, VA, a.epochs, 2e-3, seed=0, log=True)
-    torch.save({"state": net.state_dict(), "labels": LABELS, "width": a.width}, os.path.join(OUT_DIR, "cnn_pretrained.pt"))
-    Pva, _ = predict(net, VA[0], VA[1])
-    thr_cnn = best_thresholds(A_va[0][LABELS].values.astype(int), Pva)
-    cnn_hist = hist
-    for k, (d, m) in tests.items():
-        T = to_tensors(norm, d, m)
-        P, VC = predict(net, T[0], T[1])
-        results[f"CNN/{k}"] = metrics(Ytest[k], P, thr_cnn, vclass_idx(d), VC)
-        preds[f"CNN/{k}"] = P
-        preds[f"CNNvc/{k}"] = VC
-        r = results[f"CNN/{k}"]
-        print(f"  {k:24s} mAP {r['mAP']:.3f}  macroF1 {r['macroF1']:.3f}  vessel-type acc {r.get('vessel_type_acc', float('nan')):.3f}")
+    # ------------- CNN grid
+    print("\n== CNN grid (inputs x training corpus) ==", flush=True)
+    grid = [Variant("Aonly-v1", TRAIN_A, a.width), Variant("Aonly-v2", TRAIN_A, a.width),
+            Variant("multi-v1", TRAIN_MULTI, a.width), Variant("multi-v2", TRAIN_MULTI, a.width)]
+    thr_of = {}
+    for v in grid:
+        tr, va = (tr_a, va_a) if v.train_names is TRAIN_A else (tr_multi, va_multi)
+        v.norm = Norm(tr.mel, tr.df[v.cols].values)
+        v.net = v.fresh()
+        if a.skip_train and os.path.exists(v.path()):
+            v.net.load_state_dict(torch.load(v.path(), weights_only=False)["state"])
+            print(f"  [{v.tag}] loaded", flush=True)
+        else:
+            t0 = time.time()
+            print(f"  [{v.tag}] params {sum(p.numel() for p in v.net.parameters()):,}", flush=True)
+            v.net, hist, best = train_net(v.net, v.data(tr), v.data(va), a.epochs, 2e-3, seed=0, log=True,
+                                          neg_frac=a.neg_frac)
+            torch.save({"state": v.net.state_dict(), "tag": v.tag, "norm": v.norm.state(), "cols": v.cols, "width": a.width}, v.path())
+            R[f"history/{v.tag}"] = hist
+            print(f"  [{v.tag}] trained in {(time.time() - t0) / 60:.1f} min, best val mAP {best:.3f}", flush=True)
+        Pva, _ = predict(v.net, v.data(va))
+        thr_of[v.tag] = best_thresholds(va.df[LABELS].values.astype(int), Pva)
+        for k, sl in tests.items():
+            d = v.data(sl)
+            P, VC = predict(v.net, d)
+            R[f"CNN-{v.tag}/{k}"] = eval_scores(sl, P, VC, thr_of[v.tag])
+            preds[f"CNN-{v.tag}/{k}"], preds[f"CNN-{v.tag}-vc/{k}"] = P, VC
+            # unsupervised adaptation: BN statistics from the first 25% of the target run (no labels)
+            if k.startswith(("B_", "E_")):
+                site = k[0]
+                un = adapt[site]["s1_unlab" if k.endswith("season1") else "s2_unlab"]
+                net_ab = adabn(v.net, v.data(un))
+                P2, VC2 = predict(net_ab, d)
+                R[f"CNN-{v.tag}+AdaBN/{k}"] = eval_scores(sl, P2, VC2, thr_of[v.tag])
+                preds[f"CNN-{v.tag}+AdaBN/{k}"], preds[f"CNN-{v.tag}+AdaBN-vc/{k}"] = P2, VC2
+        print(f"  {v.tag:10s} " + " ".join(f"{k}:{R[f'CNN-{v.tag}/{k}']['mAP']:.3f}" for k in tests), flush=True)
 
-    # ---------------- fine-tuning at site B
-    print("\n== Fine-tuning on a small labelled B set ==")
-    FT, FV = to_tensors(norm, *B_ft), to_tensors(norm, *B_val)
-    Yft_val = B_val[0][LABELS].values.astype(int)
-    ft_results = {"adapt_windows": len(B_ft[0]), "configs": [], "final": {}}
-    stages = {"head_only": lambda n: n.startswith(("head", "vc_head", "vec")),
-              "last_block+head": lambda n: n.startswith(("blocks.3", "head", "vc_head", "vec")),
-              "all_layers": None}
-    sel = []
-    pretrained = {"state": copy.deepcopy(net.state_dict())}
-    for stage, fn in stages.items():
-        for lr in (3e-4, 1e-3):
-            n2 = Net(len(VEC), len(LABELS), len(VESSEL_CLASSES), a.width)
-            n2.load_state_dict(pretrained["state"])
-            n2, _, sc = train_net(n2, FT, FV, 14, lr, seed=0, trainable=fn)
-            ft_results["configs"].append({"stage": stage, "lr": lr, "val_mAP": sc})
-            print(f"  FT {stage:16s} lr={lr:g} val mAP {sc:.3f}")
-            sel.append((sc, stage, lr))
-    sc0, st0, lr0 = max(sel)
-    print(f"  selected: {st0}, lr={lr0:g}")
-    ft_results["selected"] = {"stage": st0, "lr": lr0}
+    # ------------- calibration of the main model (temperature scaling fitted on val)
+    main_v = grid[3]
+    va_d = main_v.data(va_multi)
+    lg_va, _ = predict(main_v.net, va_d, logits=True)
+    T = fit_temperature(lg_va, va_multi.df[LABELS].values.astype(int))
+    R["calibration"] = {"temperature": T.tolist(), "ece_raw": {}, "ece_scaled": {}}
+    for k, sl in tests.items():
+        lg, _ = predict(main_v.net, main_v.data(sl), logits=True)
+        Pr, Ps = 1 / (1 + np.exp(-lg)), 1 / (1 + np.exp(-lg / T))
+        R["calibration"]["ece_raw"][k] = {l: ece(Pr[:, j], Ytest[k][:, j]) for j, l in enumerate(LABELS)}
+        R["calibration"]["ece_scaled"][k] = {l: ece(Ps[:, j], Ytest[k][:, j]) for j, l in enumerate(LABELS)}
+        preds[f"CNN-multi-v2-cal/{k}"] = Ps
 
-    ft_runs, scratch_runs = [], []
-    for sd in range(a.ft_seeds):
-        n2 = Net(len(VEC), len(LABELS), len(VESSEL_CLASSES), a.width)
-        n2.load_state_dict(pretrained["state"])
-        n2, _, _ = train_net(n2, FT, FV, 14, lr0, seed=100 + sd, trainable=stages[st0])
-        Pv, _ = predict(n2, FV[0], FV[1])
-        thr = best_thresholds(Yft_val, Pv)
-        ns = Net(len(VEC), len(LABELS), len(VESSEL_CLASSES), a.width)
-        ns, _, _ = train_net(ns, FT, FV, 30, 2e-3, seed=100 + sd)
-        Pv2, _ = predict(ns, FV[0], FV[1])
-        thr2 = best_thresholds(Yft_val, Pv2)
-        for tag, model, th, store in (("finetuned", n2, thr, ft_runs), ("scratch", ns, thr2, scratch_runs)):
-            row = {}
-            for k in ("B_zero_shot", "B_other_season"):
-                d, m = tests[k]
-                T = to_tensors(norm, d, m)
-                P, VC = predict(model, T[0], T[1])
-                row[k] = metrics(Ytest[k], P, th, vclass_idx(d), VC)
-                if sd == 0:
-                    preds[f"CNN-{tag}/{k}"] = P
-                    preds[f"CNN-{tag}vc/{k}"] = VC
-            store.append(row)
+    # ------------- few-label adaptation at the held-out sites
+    print("\n== Few-label adaptation (main model: multi-v2) ==", flush=True)
+    base_state = copy.deepcopy(main_v.net.state_dict())
+    sizes = [0, 54, 108, 216, 432, 648] if not a.smoke else [0, 54]
+    R["adaptation"] = {}
+    for site in HELD_OUT:
+        ad = adapt[site]
+        k1, k2 = f"{site}_season1", f"{site}_season2"
+        curve = {"sizes": sizes, "season1": {}, "season2": {}}
+        for n in sizes:
+            runs_s = []
+            for sd in range(a.ft_seeds if n > 0 else 1):
+                net = main_v.fresh()
+                net.load_state_dict(base_state)
+                if n > 0:
+                    net, _, _ = train_net(net, main_v.data(ad["s1_ft"].head(n)), main_v.data(ad["s1_val"]), 14, 1e-3,
+                                          seed=100 + sd)
+                Pv, _ = predict(net, main_v.data(ad["s1_val"]))
+                thr = best_thresholds(ad["s1_val"].df[LABELS].values.astype(int), Pv) if n > 0 else thr_of[main_v.tag]
+                row = {}
+                for kk in (k1, k2):
+                    P, VC = predict(net, main_v.data(tests[kk]))
+                    row[kk] = eval_scores(tests[kk], P, VC, thr)
+                    if sd == 0 and n in (0, 648):
+                        preds[f"CNN-ft{n}/{kk}"], preds[f"CNN-ft{n}-vc/{kk}"] = P, VC
+                runs_s.append(row)
+            for kk, key in ((k1, "season1"), (k2, "season2")):
+                v = [r[kk]["mAP"] for r in runs_s]
+                curve[key][n] = {"mAP_mean": float(np.mean(v)), "mAP_std": float(np.std(v)),
+                                 "per_label_ap": {l: float(np.nanmean([r[kk]["ap"][l] for r in runs_s])) for l in LABELS},
+                                 "vessel_type_acc": float(np.nanmean([r[kk].get("vessel_type_acc", np.nan) for r in runs_s]))}
+            print(f"  {site} n={n:3d}: season1 {curve['season1'][n]['mAP_mean']:.3f}±{curve['season1'][n]['mAP_std']:.3f} "
+                  f"season2 {curve['season2'][n]['mAP_mean']:.3f}±{curve['season2'][n]['mAP_std']:.3f}", flush=True)
 
-    def agg(runs, k, key):
-        v = [r[k][key] for r in runs]
-        return float(np.mean(v)), float(np.std(v))
-
-    for k in ("B_zero_shot", "B_other_season"):
-        zs = results[f"CNN/{k}"]
-        ft_results["final"][k] = {
-            "zero_shot_mAP": zs["mAP"], "zero_shot_macroF1": zs["macroF1"],
-            "finetuned_mAP": agg(ft_runs, k, "mAP"), "finetuned_macroF1": agg(ft_runs, k, "macroF1"),
-            "scratch_mAP": agg(scratch_runs, k, "mAP"), "scratch_macroF1": agg(scratch_runs, k, "macroF1"),
-            "finetuned_per_label_ap": {l: float(np.nanmean([r[k]["ap"][l] for r in ft_runs])) for l in LABELS},
-            "zero_shot_per_label_ap": zs["ap"],
-            "scratch_per_label_ap": {l: float(np.nanmean([r[k]["ap"][l] for r in scratch_runs])) for l in LABELS},
+        # two-season re-adaptation: 324 labelled windows from season 1 + 324 from season 2
+        half = min(324, len(ad["s1_ft"]), len(ad["s2_ft"]))
+        two_tr = Slice.concat([ad["s1_ft"].head(half), ad["s2_ft"].head(half)])
+        two_va = Slice.concat([ad["s1_val"], ad["s2_val"]])
+        two, scratch, one = [], [], []
+        for sd in range(a.ft_seeds):
+            net = main_v.fresh()
+            net.load_state_dict(base_state)
+            net, _, _ = train_net(net, main_v.data(two_tr), main_v.data(two_va), 14, 1e-3, seed=200 + sd)
+            Pv, _ = predict(net, main_v.data(two_va))
+            thr = best_thresholds(two_va.df[LABELS].values.astype(int), Pv)
+            ns = main_v.fresh()
+            ns, _, _ = train_net(ns, main_v.data(ad["s1_ft"]), main_v.data(ad["s1_val"]), 30, 2e-3, seed=200 + sd)
+            Pv2, _ = predict(ns, main_v.data(ad["s1_val"]))
+            thr2 = best_thresholds(ad["s1_val"].df[LABELS].values.astype(int), Pv2)
+            for model, th, store in ((net, thr, two), (ns, thr2, scratch)):
+                store.append({kk: eval_scores(tests[kk], *predict(model, main_v.data(tests[kk])), th) for kk in (k1, k2)})
+        R["adaptation"][site] = {
+            "curve": curve,
+            "two_season_648": {kk: {"mAP_mean": float(np.mean([r[kk]["mAP"] for r in two])),
+                                    "mAP_std": float(np.std([r[kk]["mAP"] for r in two]))} for kk in (k1, k2)},
+            "scratch_648_season1_only": {kk: {"mAP_mean": float(np.mean([r[kk]["mAP"] for r in scratch])),
+                                              "mAP_std": float(np.std([r[kk]["mAP"] for r in scratch]))} for kk in (k1, k2)},
         }
-        f = ft_results["final"][k]
-        print(f"  {k}: zero-shot mAP {f['zero_shot_mAP']:.3f} | fine-tuned {f['finetuned_mAP'][0]:.3f}±{f['finetuned_mAP'][1]:.3f} "
-              f"| scratch(same {len(B_ft[0])} windows) {f['scratch_mAP'][0]:.3f}±{f['scratch_mAP'][1]:.3f}")
+        # GB baseline with target windows added
+        both = pd.concat([tr_multi.df, ad["s1_ft"].df])
+        w = np.concatenate([np.ones(len(tr_multi)), np.full(len(ad["s1_ft"]), 4.0)])
+        gbm = fit_gb(both, None, TAB_V2, sample_weight=w)
+        R["adaptation"][site]["gb_multi+648"] = {kk: float(eval_scores(tests[kk], pred_gb(gbm, tests[kk].df, TAB_V2),
+                                                                       None,
+                                                                       np.full(len(LABELS), 0.5))["mAP"]) for kk in (k1, k2)}
+        print(f"  {site} two-season(324+324): " + " ".join(f"{kk} {R['adaptation'][site]['two_season_648'][kk]['mAP_mean']:.3f}" for kk in (k1, k2))
+              + f" | scratch {R['adaptation'][site]['scratch_648_season1_only'][k1]['mAP_mean']:.3f}/"
+              f"{R['adaptation'][site]['scratch_648_season1_only'][k2]['mAP_mean']:.3f}", flush=True)
 
-    # GB trained on B-small only / A + B-small
-    both = pd.concat([A_tr[0], B_ft[0]])
-    w = np.concatenate([np.ones(len(A_tr[0])), np.full(len(B_ft[0]), 4.0)])
-    gb_b, _ = fit_gb(pd.concat([A_tr[0], B_ft[0]]), None, sample_weight=w)
-    for k in ("B_zero_shot", "B_other_season"):
-        P = pred_gb(gb_b, tests[k][0])
-        ft_results["final"][k]["gb_A+B_small_mAP"] = metrics(Ytest[k], P, thr_gb)["mAP"]
-
-    results["finetune"] = ft_results
-    results["gb_hyperparams"] = picked
-    results["cnn_pretrain_history"] = cnn_hist
-    results["label_prevalence"] = {k: {l: float(v[0][l].mean()) for l in LABELS} for k, v in tests.items()}
-    results["thresholds_cnn"] = thr_cnn.tolist()
-    with open(os.path.join(OUT_DIR, "classification_results.json"), "w") as f:
-        json.dump(results, f, indent=1, default=float)
-    np.savez_compressed(os.path.join(OUT_DIR, "classification_preds.npz"), **preds,
-                        **{f"Y/{k}": v for k, v in Ytest.items()},
-                        **{f"VC/{k}": vclass_idx(v[0]) for k, v in tests.items()})
+    tag = "_smoke" if a.smoke else ""
+    with open(os.path.join(OUT_DIR, f"classification_results{tag}.json"), "w") as f:
+        json.dump(R, f, indent=1, default=float)
+    np.savez_compressed(os.path.join(OUT_DIR, f"classification_preds{tag}.npz"), **preds,
+                        **{f"Y/{k}": v for k, v in Ytest.items()}, **{f"VC/{k}": v for k, v in VCtest.items()})
     print(f"\ndone in {(time.time() - t_start) / 60:.1f} min")
 
 
