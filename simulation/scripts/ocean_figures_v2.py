@@ -7,6 +7,7 @@ Figures for the weak-spot study and the ablation (reads classification_results.j
   fig12_lofar_vessel_type.png narrowband comb separates cargo from tanker
   fig13_calibration.png       reliability diagrams before / after temperature scaling
   fig14_vessel_confusion.png  vessel-type confusion, v1 vs v2 inputs
+  fig15_robustness.png        mAP under calibration drift, noise, sensor outage, disabled branches
 """
 
 import json
@@ -256,7 +257,34 @@ def fig14():
     plt.close(fig)
 
 
+def fig15():
+    Rb = json.load(open(os.path.join(OUT_DIR, "robustness_results.json")))
+    sites = list(Rb["none"])
+    fig, ax = plt.subplots(1, 2, figsize=(10.5, 3.6), gridspec_kw={"width_ratios": [1.1, 1]})
+    gains = [-10, -6, -3, 0, 3, 6, 10]
+    for site, col in zip(sites, (C["v2"], C["multi"], C["warn"])):
+        ax[0].plot(gains, [Rb["none" if g == 0 else f"gain_{g}"][site]["mAP"] for g in gains], marker="o", color=col, label=site)
+    ax[0].set_xlabel("hydrophone gain error (dB)")
+    ax[0].set_ylabel("mAP")
+    ax[0].set_title("Calibration drift (training augmentation covers +-3 dB)")
+    ax[0].legend(fontsize=7)
+    keys = [("mel_noise_4", "+4 dB spectral noise"), ("env_outage", "env sensors lost"), ("no_lofar", "LOFAR branch off"),
+            ("no_health", "health context off")]
+    w = 0.26
+    for i, site in enumerate(sites):
+        ax[1].bar(np.arange(len(keys)) + (i - 1) * w, [Rb[k][site]["mAP"] - Rb["none"][site]["mAP"] for k, _ in keys], w,
+                  color=(C["v2"], C["multi"], C["warn"])[i], label=site)
+    ax[1].set_xticks(range(len(keys)))
+    ax[1].set_xticklabels([n for _, n in keys], rotation=15, fontsize=8)
+    ax[1].axhline(0, color="k", lw=0.6)
+    ax[1].set_ylabel("change in mAP")
+    ax[1].set_title("Other degradations")
+    fig.tight_layout()
+    fig.savefig(os.path.join(FIG, "fig15_robustness.png"))
+    plt.close(fig)
+
+
 if __name__ == "__main__":
-    for fn in (fig9, fig10, fig11, fig12, fig13, fig14):
+    for fn in (fig9, fig10, fig11, fig12, fig13, fig14, fig15):
         fn()
         print("wrote", fn.__name__)

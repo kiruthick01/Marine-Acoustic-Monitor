@@ -15,6 +15,23 @@ Mean ± standard deviation across 30 independently seeded simulation runs (150 d
 
 Still describes only how Isolation Forest separates *synthetic* anomalies from *synthetic* ambient background — no real hardware or field data exists yet to validate against. See [simulation/README.md](simulation/README.md) for methodology.
 
+### Physics-based ocean simulator
+
+A second, richer simulation layer, [simulation/ocean/](simulation/ocean/README.md), models coupled weather and ocean state (wind, waves, rain, tides, stratification, runoff-driven salinity/turbidity/pH), biological sources (snapping shrimp, fish chorus, dolphins, whales), human sources (five vessel classes with Doppler, seismic airgun, instrument faults) and a hydrophone chain with 16-bit clipping, over five sites 20-110 m deep. Two sites and two seasons each are held out of training entirely. Headline results on **synthetic data only**:
+
+![weak spots](simulation/ocean/figures/fig9_weakspots.png)
+
+| Task | Result |
+|------|--------|
+| Supervised multi-label classifier, zero-shot on six unseen weather/season/site tests | mean mAP **0.975** (original design 0.916; worst case 0.835 -> 0.941), no target-site labels |
+| Instrument-fault detection (was the weakest label) | AP 0.44 -> 1.00; stuck-sensor recall 0 -> 1.0 |
+| Cargo vs. tanker (was at chance) | accuracy 0.5 -> 0.70-0.96 (physical Bayes cap 0.88 from blade rate alone) |
+| Seismic airgun at unseen sites | AP ~0 -> 0.80 / 0.99 / 1.00; one summer run stays undetectable (events at the 10 dB audibility limit) |
+| Unsupervised detection (3-day self-calibration, 5 unseen runs) | AUPRC 0.49 best vs 0.39 for the original detector; labelled ceiling 0.99 |
+| Compute per 5 s window | 41 ms on one host thread, 1.4 MB model |
+
+Fixes, ablations, negative results (AdaBN and fine-tuning can hurt), robustness and a four-file real-recording smoke test are in the [ocean README](simulation/ocean/README.md); a presentation / interview guide with the list of project qualities and likely questions is in [docs/project-highlights.md](docs/project-highlights.md). Real public datasets (see [docs/datasets.md](docs/datasets.md)) have only been used for that smoke test.
+
 ## Motivation
 
 Marine ecosystems generate continuous acoustic and environmental signal — biological activity, equipment/vessel noise, water-quality shifts, anomalous events — that's expensive to monitor with human observers or connectivity-dependent systems. This project designs a low-cost, edge-computed monitoring unit that combines passive acoustic monitoring with environmental sensing (temperature, pH, turbidity, salinity), correlates them on-device into a single feature space, and flags anomalies locally without depending on continuous high-bandwidth connectivity. The goal is a platform that's deployable on a solar-powered buoy or a fixed dock/pier mount using the same core hardware and software, reporting compact summaries over a low-bandwidth link while retaining full-resolution data for later retrieval.
@@ -29,10 +46,12 @@ Marine ecosystems generate continuous acoustic and environmental signal — biol
 - [docs/related-work.md](docs/related-work.md) — prior art and how this project's design differs.
 - [docs/datasets.md](docs/datasets.md) — what data the project needs (own deployment data, public vessel/bioacoustic/multimodal datasets, pretrained models) and which pipeline stage each serves.
 - [docs/pi-implementation.md](docs/pi-implementation.md) — how `edge/` runs today in mock-hardware mode, the I2C wiring/address plan for when hardware exists, and systemd deployment.
+- [docs/project-highlights.md](docs/project-highlights.md) — presentation / interview guide: pitch, project qualities with evidence, weak spots found and fixed, likely questions, limitations.
 
 ## Implementation
 
 - `simulation/` — synthetic-hardware proof that the ML pipeline design works end-to-end (see [simulation/README.md](simulation/README.md)).
+- `simulation/ocean/` — physics-based ocean simulator with detection/classification experiments and figure rendering (see [simulation/ocean/README.md](simulation/ocean/README.md)).
 - `edge/` — the real Pi-side production software: hardware abstraction layer (mock backend usable today, real backend stubbed for once hardware exists), capture loop, calibration, telemetry payload assembly, duty-cycle scheduler. Run `python -m edge.main --once` for a one-window smoke test. See [docs/pi-implementation.md](docs/pi-implementation.md).
 - `tools/power_budget.py` — standalone power budget estimator (duty cycle vs. solar/battery sizing) using placeholder component draw figures, pending a priced BOM. Run `python tools/power_budget.py --help`.
 - `deploy/marine-monitor.service` — systemd unit for running `edge/` unattended once real hardware is wired.

@@ -95,6 +95,23 @@ Remaining caveats, stated plainly:
 ![confusion](figures/fig14_vessel_confusion.png)
 ![calibration](figures/fig13_calibration.png)
 
+### Robustness of the main model (A weather / B spring / E winter test slices)
+
+| Perturbation | mAP change |
+|---|---|
+| hydrophone gain error +-3 dB (inside the training augmentation) | -0.02 ... +0.00 |
+| gain error +-6 dB | up to -0.06 (B -6 dB: 0.974 -> 0.917) |
+| gain error +-10 dB | -0.04 ... -0.15 (E +10 dB: 0.984 -> 0.837) |
+| +4 dB spectral noise on the log-mel | -0.01 ... -0.06 |
+| all environmental sensors lost (set to training median) | -0.006 ... +0.001 (acoustics carry the labels) |
+| LOFAR branch disabled | -0.018 ... -0.003 |
+| sensor-health context disabled | 0.000 (A, B), **-0.077** at E (the site with stuck-sensor episodes) |
+
+![robustness](figures/fig15_robustness.png)
+
+Practical reading: an uncalibrated sensitivity error beyond ~6 dB costs real accuracy, so field calibration against a reference
+tone matters; losing the environmental channels costs almost nothing for these labels.
+
 ### Stage 2: unsupervised anomaly detection (3-day self-calibration, tuned on dev run s2, tested on 5 unseen runs)
 
 | Method | AUROC | AUPRC | F1 |
@@ -137,6 +154,7 @@ python simulation/scripts/ocean_detect.py          # Stage 2 (~20 min)
 python simulation/scripts/ocean_classify.py        # Stage 3 grid + adaptation (~3 h on CPU); --smoke for a code-path test
 python simulation/scripts/ocean_eval_extra.py      # full-run airgun, SNR strata, FT from A-only, Bayes bound
 python simulation/scripts/ocean_bootstrap.py       # day-block bootstrap CIs
+python simulation/scripts/ocean_robustness.py      # gain drift, noise, sensor outage, disabled branches
 python simulation/scripts/ocean_edge_benchmark.py
 python simulation/scripts/ocean_real_check.py --data <dir with ShipsEar samples.zip extracted>
 python simulation/scripts/ocean_render.py && python simulation/scripts/ocean_figures_v2.py
